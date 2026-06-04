@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="Plate &amp; Load Calc"/>
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABS3GwHAAAD60lEQVR4nO3dwW3bBhSAYcnoPTu4lwAdIEC9SQ/uHJmgc9SHbuICGaBALvUOmSA9FAnixJYoihRJ/d93NUwJ8Pv5SEpB9ruF3T7ef176PbCcp7uH/ZKvf/EXN/AccukgLvJihp4xLhHDrC9g8JnCnCHMcmCDzxzmCGHSAxp8LmHKECY5kMFnCVOEcHPuAQw/S5li9s4KwPCztHNncNQKMfis0ZhLopM3gOFnrcbM5kkBGH7W7tQZHRyA4WcrTpnVQQEYfrZm6Mye/RgUtuxoAM7+bNWQ2T0YgOFn647N8KsBGH6uxaFZdg9A2osBOPtzbV6baRuAtB8CcPbn2n0/4zYAaV8DcPan4ttZtwFIEwBpN7udyx96vsy8DUCaAEgTAGl71/+U2QCkCYA0AZAmANIEQJoASBMAaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkCYA0AZAmANIEQJoASBMAaQIgTQCkCYA0AZAmANIEQNpPcx3431//PPl3fv779xneCWu0lvmwAUgTAGkCIE0ApAmANAGQNvox6F+/vD/48w+fPu7evXk79vDwzIdPH4/O3G///HHycW0A0gRAmgBIEwBps30XaIyh3w/xnaH1GvMdnyXZAKQJgDQBkCYA0gRAmgBIEwBpAiBtVR+EDbW1D1tYLxuANAGQJgDSBECaAEgTAGkCIE0ApAmANAGQtsmvQvg3weu1ta+p2ACkCYA0AZAmANIEQJoASBMAaQIgbVUfhPmAa/uG/g3X8oGZDUCaAEgTAGkCIG30TfCx/5JyLTc5XId3b97O8pDEBiBNAKQJgDQBkCYA0gRA2v728f7z0m8ClmIDkCYA0gRAmgBIEwBpAiBNAKQJgDQBkCYA0gRAmgBIEwBpAiBNAKQJgDQBkCYA0gRAmgBIEwBpAiBNAKQJgDQBkCYA0gRAmgBIEwBpAiBNAKQJgDQBkCYA0gRAmgBIu3m6e9gv/SZgCU93D3sbgDQBkCYA0m52u/+vhZZ+I3BJX2beBiBNAKR9DcBlEBXfzroNQNqzAGwBrt33M24DkPZDALYA1+ql2bYBSHsxAFuAa/PaTNsApL0agC3AtTg0ywc3gAjYumMzfPQSSARs1ZDZdQ9A2qAAbAG2ZujMDt4AImArTpnVky6BRMDanTqjJ98DiIC1GjObZw3z7eP953N+H6Zwzkn5rKdAtgFLO3cGz34MKgKWMsXsTTq8Lom4hClPurOcvYXAHOa42pj18kUITGHOy+yLXL8LgTEucX958RtYMXDIpR+qLP4ERxBtSz9F/A9VFtg2miUC/wAAAABJRU5ErkJggg=="/>
+<meta name="theme-color" content="#0f1117"/>
+<title>Plate &amp; Load Calculator</title>
+<style>
+:root {
+--bg:#0f1117; --surface:#1a1d26; --surface2:#22263a;
+--border2:rgba(255,255,255,0.18); --text:#f0f2f8; --muted:#7a8099;
+--radius:16px; --radius-sm:10px;
+--safe-top:env(safe-area-inset-top,0px);
+--safe-bottom:env(safe-area-inset-bottom,0px);
+--card-bg:#ffffff; --card-border:#c8d0e0; --card-header:#e8eef8;
+--card-text:#0d1420; --card-muted:#4a5568; --card-accent:#1a6fd4;
+--card-green:#166534; --card-amber:#92400e; --card-red:#991b1b;
+--leg-bg:#fff8f0; --leg-border:#e8d5b0; --leg-header:#f5e8cc; --leg-accent:#b45309;
+--land-bg:#f0f4ff; --land-border:#b8c8f0; --land-header:#dce8ff; --land-accent:#2563eb;
+}
+* { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+html, body { background:var(--bg); color:var(--text); font-family:-apple-system,'SF Pro Display','Helvetica Neue',sans-serif; min-height:100vh; }
+.app { max-width:500px; margin:0 auto; padding:calc(var(--safe-top) + 16px) 14px calc(var(--safe-bottom) + 24px); display:flex; flex-direction:column; gap:12px; }
+.header { display:flex; align-items:center; justify-content:space-between; }
+.header h1 { font-size:22px; font-weight:800; letter-spacing:-0.5px; color:var(--text); line-height:1; }
+.header p { font-size:13px; color:var(--muted); margin-top:2px; }
+.header-sub { font-size:11px; color:var(--muted); margin-top:1px; font-weight:600; }
+.barbell-icon { width:44px; height:44px; border-radius:12px; background:rgba(79,142,247,0.15); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+/* Tab bar */
+.tab-bar { display:flex; background:var(--surface); border-radius:12px; padding:3px; gap:3px; }
+.tab-btn { flex:1; padding:9px 4px; border:none; border-radius:9px; font-size:12px; font-weight:700; cursor:pointer; background:transparent; color:var(--muted); touch-action:manipulation; -webkit-user-select:none; user-select:none; }
+.tab-btn.active { background:var(--card-bg); color:var(--card-text); box-shadow:0 1px 4px rgba(0,0,0,0.12); }
+/* Pages */
+.page { display:flex; flex-direction:column; gap:12px; }
+.page.hidden { display:none; }
+/* Input card */
+.input-card { background:var(--card-bg); border:1.5px solid var(--card-border); border-radius:var(--radius); padding:14px; }
+.input-card > label { display:block; font-size:11px; font-weight:700; letter-spacing:0.8px; text-transform:uppercase; color:var(--card-muted); margin-bottom:10px; }
+.weight-row { display:flex; align-items:center; gap:8px; }
+#totalWeight { flex:1; min-width:0; background:#f0f5ff; border:2px solid var(--card-border); border-radius:var(--radius-sm); color:var(--card-text); font-size:36px; font-weight:800; text-align:center; padding:10px 4px; outline:none; -webkit-appearance:textfield; appearance:textfield; }
+#totalWeight:focus { border-color:var(--card-accent); }
+#totalWeight::placeholder { color:#b0bcd0; }
+.lbs-label { font-size:16px; font-weight:700; color:var(--card-muted); flex-shrink:0; }
+.steppers { display:flex; flex-direction:column; gap:5px; flex-shrink:0; }
+.steppers button { width:44px; height:34px; background:var(--card-header); border:1.5px solid var(--card-border); border-radius:8px; color:var(--card-text); font-size:16px; font-weight:700; display:flex; align-items:center; justify-content:center; cursor:pointer; touch-action:manipulation; -webkit-user-select:none; user-select:none; }
+.steppers button:active { background:#ccd8f0; }
+/* Two columns */
+.cols2 { display:table; width:100%; table-layout:fixed; border-spacing:10px 0; }
+.bar-col { display:table-cell; background:var(--card-bg); border:1.5px solid var(--card-border); border-radius:var(--radius); overflow:hidden; vertical-align:top; width:50%; }
+.bar-col.active { border-color:var(--card-accent); border-width:2px; }
+/* Smith Machine */
+.smith-col { background:var(--card-bg); border:1.5px solid var(--card-border); border-radius:var(--radius); overflow:hidden; }
+.smith-col.active { border-color:var(--card-accent); border-width:2px; }
+.smith-inner { display:flex; align-items:stretch; }
+.smith-head { background:var(--card-header); padding:10px 12px; border-right:1px solid var(--card-border); display:flex; flex-direction:column; justify-content:center; min-width:110px; flex-shrink:0; }
+.smith-head h2 { font-size:13px; font-weight:800; color:var(--card-text); line-height:1.2; }
+.smith-head .bar-name { font-size:10px; color:var(--card-muted); margin-top:2px; font-style:italic; }
+.smith-head .bar-weight { font-size:10px; color:var(--card-muted); margin-top:1px; }
+.smith-body { flex:1; display:flex; flex-direction:column; }
+.smith-stats { display:flex; border-bottom:1px solid #edf2fb; }
+.smith-stat { flex:1; padding:8px 10px; border-right:1px solid #edf2fb; }
+.smith-stat:last-child { border-right:none; }
+.smith-chips { padding:8px 10px 10px; background:#f8faff; }
+.smith-chips-top { display:flex; align-items:center; gap:5px; margin-bottom:6px; }
+/* Column styles */
+.col-head { background:var(--card-header); padding:9px 11px; border-bottom:1px solid var(--card-border); }
+.col-head h2 { font-size:13px; font-weight:800; color:var(--card-text); line-height:1.2; }
+.col-head .bar-name { font-size:10px; color:var(--card-muted); margin-top:2px; font-style:italic; }
+.col-head .bar-weight { font-size:10px; color:var(--card-muted); margin-top:1px; }
+.stat { padding:7px 11px; border-bottom:1px solid #edf2fb; }
+.stat-row { display:flex; align-items:baseline; justify-content:space-between; }
+.slabel { font-size:9px; color:var(--card-muted); text-transform:uppercase; letter-spacing:0.5px; font-weight:600; display:block; margin-bottom:1px; }
+.sval { font-size:18px; font-weight:800; color:var(--card-text); letter-spacing:-0.3px; line-height:1.1; }
+.sval.accent { color:var(--card-accent); }
+.sval.dim { color:#b0bcd0; font-size:13px; font-weight:500; }
+.sval.err { color:var(--card-red); font-size:11px; font-weight:600; }
+.delta-over { font-size:10px; font-weight:700; color:#166534; }
+.delta-under { font-size:10px; font-weight:700; color:#991b1b; }
+.plates-area { padding:8px 11px 10px; background:#f8faff; }
+.plates-top { display:flex; align-items:center; gap:5px; margin-bottom:6px; }
+.plabel { font-size:9px; color:var(--card-muted); text-transform:uppercase; letter-spacing:0.5px; font-weight:600; }
+.badge { font-size:9px; font-weight:800; padding:2px 6px; border-radius:20px; }
+.badge-exact { background:#dcfce7; color:var(--card-green); }
+.badge-approx { background:#fef3c7; color:var(--card-amber); }
+.badge-exceeds { font-size:9px; font-weight:800; padding:2px 6px; border-radius:20px; background:#fee2e2; color:#991b1b; }
+.chips { display:flex; flex-wrap:wrap; gap:4px; }
+.chip { font-size:11px; font-weight:800; padding:4px 8px; border-radius:20px; }
+.c45{background:#1565c0;color:#fff;} .c35{background:#f9d000;color:#111;} .c25{background:#1b8c2e;color:#fff;}
+.c10{background:#212121;color:#fff;} .c5{background:#7dd3fc;color:#0d2a3a;} .c25s{background:#86efac;color:#0d2a1a;}
+.c125{background:#f0f0f0;color:#1a1a1a;border:1.5px solid #aaa;}
+.chip-none { font-size:11px; color:#b0bcd0; font-style:italic; }
+.chip-err { font-size:11px; color:var(--card-red); font-weight:600; }
+.bar-only { font-size:11px; color:var(--card-green); font-style:italic; font-weight:600; }
+.approx-note { font-size:10px; color:var(--card-amber); font-weight:600; margin-top:4px; }
+/* Leg developer */
+.leg-half { display:table-cell; background:var(--leg-bg); border:1.5px solid var(--leg-border); border-radius:var(--radius); overflow:hidden; vertical-align:top; }
+.leg-half.active { border-color:var(--leg-accent); border-width:2px; }
+.leg-head { background:var(--leg-header); padding:9px 11px; border-bottom:1.5px solid var(--leg-border); display:flex; align-items:center; gap:6px; }
+.leg-head-text h2 { font-size:13px; font-weight:800; color:var(--card-text); }
+.leg-head-text .leg-sub { font-size:9px; color:var(--card-muted); font-style:italic; margin-top:1px; }
+.leg-chips-row { padding:8px 11px 10px; }
+.leg-chips-top { display:flex; align-items:center; gap:5px; margin-bottom:6px; }
+.leg-stat { padding:7px 11px; border-bottom:1px solid #e8d5b0; }
+/* Landmine */
+.land-half { display:table-cell; background:var(--land-bg); border:1.5px solid var(--land-border); border-radius:var(--radius); overflow:hidden; vertical-align:top; }
+.land-half.active { border-color:var(--land-accent); border-width:2px; }
+.land-head { background:var(--land-header); padding:9px 11px; border-bottom:1.5px solid var(--land-border); }
+.land-head h2 { font-size:13px; font-weight:800; color:var(--card-text); line-height:1.2; }
+.land-head .bar-name { font-size:10px; color:var(--card-muted); margin-top:2px; font-style:italic; }
+.land-head .bar-weight { font-size:9px; color:var(--card-muted); margin-top:1px; }
+.land-stat { padding:7px 11px; border-bottom:1px solid #c8d8f8; }
+.land-chips-row { padding:8px 11px 10px; background:var(--land-bg); }
+.land-chips-top { display:flex; align-items:center; gap:5px; margin-bottom:6px; }
+/* Divider */
+.divider { height:1px; background:var(--border2); }
+/* Inventory */
+.inv-header { display:flex; align-items:baseline; gap:10px; }
+.inv-title { font-size:16px; font-weight:700; color:var(--text); }
+.inv-sub { font-size:12px; color:var(--muted); }
+.inv-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+.inv-grid-2 { display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin-top:8px; max-width:66%; margin-left:auto; margin-right:auto; }
+.inv-grid-3 { display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin-top:8px; max-width:66%; margin-left:auto; margin-right:auto; }
+.inv-item { background:var(--surface); border:1px solid var(--border2); border-radius:var(--radius-sm); padding:10px 8px; text-align:center; }
+.pcircle { width:42px; height:42px; border-radius:50%; margin:0 auto 6px; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:900; border:3px solid #fff; }
+.inv-item label { font-size:10px; color:var(--muted); display:block; margin-bottom:6px; }
+.inv-stepper { display:flex; align-items:center; justify-content:center; gap:6px; }
+.inv-stepper button { width:28px; height:28px; border-radius:50%; background:var(--surface2); border:1px solid var(--border2); color:var(--text); font-size:16px; font-weight:700; display:flex; align-items:center; justify-content:center; cursor:pointer; touch-action:manipulation; -webkit-user-select:none; user-select:none; }
+.inv-stepper button:active { background:#3a4060; }
+.inv-count { font-size:18px; font-weight:700; color:var(--text); min-width:20px; text-align:center; }
+/* Load Calculator */
+.load-count { font-size:18px; font-weight:700; color:var(--text); min-width:20px; text-align:center; }
+.load-count.warn { color:#f59e0b; }
+.load-max { font-size:9px; color:var(--muted); margin-top:2px; }
+.load-section-label { display:flex; align-items:baseline; gap:8px; }
+.load-sec-title { font-size:13px; font-weight:700; color:var(--text); }
+.load-sec-sub { font-size:11px; color:var(--muted); }
+/* Buttons */
+.clear-btn { width:100%; padding:14px; background:transparent; border:1px solid var(--border2); border-radius:var(--radius-sm); color:var(--muted); font-size:14px; font-weight:500; cursor:pointer; touch-action:manipulation; }
+.clear-btn:active { background:var(--surface2); color:var(--text); }
+/* Weather */
+.weather-line { font-size:12px; color:#8a94b0; margin-top:3px; letter-spacing:0.1px; }
+.weather-line .wtemp { color:#f0f2f8; font-weight:700; }
+.weather-line .wprecip { color:#7dd3fc; }
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- Header -->
+<div class="header">
+  <div>
+    <h1>Plate &amp; Load Calc</h1>
+    <p>For Fitbod barbell lifts</p>
+    <p class="header-sub">v1.0</p>
+    <p class="weather-line" id="weatherLine"><span style="color:#8a94b0;font-style:italic;">Loading weather...</span></p>
+  </div>
+  <div class="barbell-icon">
+    <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+      <rect x="1" y="11" width="3" height="4" rx="1" fill="#4f8ef7"/>
+      <rect x="4" y="9" width="2.5" height="8" rx="1" fill="#4f8ef7" opacity="0.8"/>
+      <rect x="6.5" y="7" width="2" height="12" rx="1" fill="#4f8ef7" opacity="0.6"/>
+      <rect x="8.5" y="12" width="9" height="2" rx="1" fill="#4f8ef7" opacity="0.5"/>
+      <rect x="17.5" y="7" width="2" height="12" rx="1" fill="#4f8ef7" opacity="0.6"/>
+      <rect x="19.5" y="9" width="2.5" height="8" rx="1" fill="#4f8ef7" opacity="0.8"/>
+      <rect x="22" y="11" width="3" height="4" rx="1" fill="#4f8ef7"/>
+    </svg>
+  </div>
+</div>
+
+<!-- Tab bar -->
+<div class="tab-bar">
+  <button class="tab-btn active" id="tab-calc" ontouchstart="event.preventDefault()" ontouchend="switchTab('calc')" onclick="switchTab('calc')">Plate Calculator</button>
+  <button class="tab-btn" id="tab-load" ontouchstart="event.preventDefault()" ontouchend="switchTab('load')" onclick="switchTab('load')">Load Calculator</button>
+</div>
+
+<!-- ═══════════════════════════ PLATE CALCULATOR PAGE ═══════════════════════════ -->
+<div id="page-calc" class="page">
+
+  <div class="input-card">
+    <label>Total recommended weight</label>
+    <div class="weight-row">
+      <input type="number" id="totalWeight" placeholder="135" min="0" step="5" inputmode="decimal"/>
+      <span class="lbs-label">lbs</span>
+      <div class="steppers"><button id="btnUp">&#9650;</button><button id="btnDn">&#9660;</button></div>
+    </div>
+  </div>
+
+  <div class="cols2">
+    <div class="bar-col" id="col44">
+      <div class="col-head"><h2>Olympic Bar</h2><div class="bar-name">(REP Colorado Bar)</div><div class="bar-weight">44 lbs (20 kg)</div></div>
+      <div class="stat"><span class="slabel">Total plates</span><div class="stat-row"><span class="sval dim" id="tp44">&#8212; lbs</span><span id="delta44"></span></div></div>
+      <div class="stat"><span class="slabel">Per side</span><span class="sval dim" id="ps44">&#8212; lbs</span></div>
+      <div class="plates-area"><div class="plates-top"><span class="plabel">Plates per side</span><span id="badge44"></span></div><div class="chips" id="chips44"><span class="chip-none">enter weight</span></div><div id="approx44"></div></div>
+    </div>
+    <div class="bar-col" id="col33">
+      <div class="col-head"><h2>Standard Bar</h2><div class="bar-name">(Rogue Bella Bar 2.0)</div><div class="bar-weight">33 lbs (15 kg)</div></div>
+      <div class="stat"><span class="slabel">Total plates</span><div class="stat-row"><span class="sval dim" id="tp33">&#8212; lbs</span><span id="delta33"></span></div></div>
+      <div class="stat"><span class="slabel">Per side</span><span class="sval dim" id="ps33">&#8212; lbs</span></div>
+      <div class="plates-area"><div class="plates-top"><span class="plabel">Plates per side</span><span id="badge33"></span></div><div class="chips" id="chips33"><span class="chip-none">enter weight</span></div><div id="approx33"></div></div>
+    </div>
+  </div>
+
+  <div class="smith-col" id="col35">
+    <div class="smith-inner">
+      <div class="smith-head"><h2>Smith Machine</h2><div class="bar-name">(ForceUSA C20)</div><div class="bar-weight">35.5 lbs (16 kg)</div></div>
+      <div class="smith-body">
+        <div class="smith-stats">
+          <div class="smith-stat"><span class="slabel">Total plates</span><div class="stat-row"><span class="sval dim" id="tp35">&#8212; lbs</span><span id="delta35"></span></div></div>
+          <div class="smith-stat"><span class="slabel">Per side</span><span class="sval dim" id="ps35">&#8212; lbs</span></div>
+        </div>
+        <div class="smith-chips"><div class="smith-chips-top"><span class="plabel">Plates per side</span><span id="badge35"></span></div><div class="chips" id="chips35"><span class="chip-none">enter weight above</span></div><div id="approx35"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cols2">
+    <div class="land-half" id="landSection">
+      <div class="land-head"><h2>Landmine</h2><div class="bar-name">(REP Colorado Bar)</div><div class="bar-weight">44 lbs bar &#183; ~22 lbs eff.</div></div>
+      <div class="land-stat"><span class="slabel">Total plates</span><div class="stat-row"><span class="sval dim" id="tpLand">&#8212; lbs</span><span id="deltaLand"></span></div></div>
+      <div class="land-chips-row"><div class="land-chips-top"><span class="plabel">Plates on end</span><span id="landBadge"></span></div><div class="chips" id="landChips"><span class="chip-none">enter weight above</span></div><div id="landApprox"></div></div>
+    </div>
+    <div class="leg-half" id="legSection">
+      <div class="leg-head"><div class="leg-head-text"><h2>Leg Developer</h2><div class="leg-sub">Freak Athlete ABX &#8212; single horn</div></div><span id="legBadge" style="margin-left:auto;"></span></div>
+      <div class="leg-chips-row"><div class="leg-chips-top"><span class="plabel">Plates on horn</span></div><div class="chips" id="legChips"><span class="chip-none">enter weight above</span></div><div id="legApprox"></div></div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="inv-header"><div class="inv-title">Plate inventory</div><div class="inv-sub">Tap + / &#8722; to adjust</div></div>
+
+  <div class="inv-grid">
+    <div class="inv-item"><div class="pcircle" style="background:#1565c0;color:#fff;">45</div><label>45 lb plates</label><div class="inv-stepper"><button ontouchstart="event.preventDefault()" ontouchend="stepInv('i45',-1)" onclick="stepInv('i45',-1)">&#8722;</button><span class="inv-count" id="i45">2</span><button ontouchstart="event.preventDefault()" ontouchend="stepInv('i45',1)" onclick="stepInv('i45',1)">+</button></div></div>
+    <div class="inv-item"><div class="pcircle" style="background:#f9d000;color:#111;">35</div><label>35 lb plates</label><div class="inv-stepper"><button ontouchstart="event.preventDefault()" ontouchend="stepInv('i35',-1)" onclick="stepInv('i35',-1)">&#8722;</button><span class="inv-count" id="i35">2</span><button ontouchstart="event.preventDefault()" ontouchend="stepInv('i35',1)" onclick="stepInv('i35',1)">+</button></div></div>
+    <div class="inv-item"><div class="pcircle" style="background:#1b8c2e;color:#fff;">25</div><label>25 lb plates</label><div class="inv-stepper"><button ontouchstart="event.preventDefault()" ontouchend="stepInv('i25',-1)" onclick="stepInv('i25',-1)">&#8722;</button><span class="inv-count" id="i25">2</span><button ontouchstart="event.preventDefault()" ontouchend="stepInv('i25',1)" onclick="stepInv('i25',1)">+</button></div></div>
+  </div>
+  <div class="inv-grid-2">
+    <div class="inv-item"><div class="pcircle" style="background:#212121;color:#fff;">10</div><label>10 lb plates</label><div class="inv-stepper"><button ontouchstart="event.preventDefault()" ontouchend="stepInv('i10',-1)" onclick="stepInv('i10',-1)">&#8722;</button><span class="inv-count" id="i10">4</span><button ontouchstart="event.preventDefault()" ontouchend="stepInv('i10',1)" onclick="stepInv('i10',1)">+</button></div></div>
+    <div class="inv-item"><div class="pcircle" style="background:#7dd3fc;color:#0d2a3a;border:3px solid #fff;">5</div><label>5 lb plates</label><div class="inv-stepper"><button ontouchstart="event.preventDefault()" ontouchend="stepInv('i5',-1)" onclick="stepInv('i5',-1)">&#8722;</button><span class="inv-count" id="i5">2</span><button ontouchstart="event.preventDefault()" ontouchend="stepInv('i5',1)" onclick="stepInv('i5',1)">+</button></div></div>
+  </div>
+  <div class="inv-grid-3">
+    <div class="inv-item"><div class="pcircle" style="background:#86efac;color:#0d2a1a;border:3px solid #fff;">2.5</div><label>2.5 lb plates</label><div class="inv-stepper"><button ontouchstart="event.preventDefault()" ontouchend="stepInv('i2h',-1)" onclick="stepInv('i2h',-1)">&#8722;</button><span class="inv-count" id="i2h">2</span><button ontouchstart="event.preventDefault()" ontouchend="stepInv('i2h',1)" onclick="stepInv('i2h',1)">+</button></div></div>
+    <div class="inv-item"><div class="pcircle" style="background:#f0f0f0;color:#1a1a1a;border:3px solid #aaa;">1.25</div><label>1.25 lb plates</label><div class="inv-stepper"><button ontouchstart="event.preventDefault()" ontouchend="stepInv('i125',-1)" onclick="stepInv('i125',-1)">&#8722;</button><span class="inv-count" id="i125">2</span><button ontouchstart="event.preventDefault()" ontouchend="stepInv('i125',1)" onclick="stepInv('i125',1)">+</button></div></div>
+  </div>
+
+  <button class="clear-btn" ontouchstart="event.preventDefault()" ontouchend="clearWeight()" onclick="clearWeight()">Clear weight</button>
+
+</div><!-- end page-calc -->
+
+<!-- ═══════════════════════════ LOAD CALCULATOR PAGE ═══════════════════════════ -->
+<div id="page-load" class="page hidden">
+
+  <div class="inv-header"><div class="inv-title">Select plates to load</div><div class="inv-sub">Per side for bars · total for single-end</div></div>
+
+  <div class="inv-grid">
+    <div class="inv-item"><div class="pcircle" style="background:#1565c0;color:#fff;">45</div><label>45 lb</label><div class="inv-stepper"><button ontouchstart="event.preventDefault()" ontouchend="stepLoad(45,-1)" onclick="stepLoad(45,-1)">&#8722;</button><span class="load-count" id="ls45">0</span><button ontouchstart="event.preventDefault()" ontouchend="stepLoad(45,1)" onclick="stepLoad(45,1)">+</button></div><div class="load-max" id="lmax45">max: 0</div></div>
+    <div class="inv-item"><div class="pcircle" style="background:#f9d000;color:#111;">35</div><label>35 lb</label><div class="inv-stepper"><button ontouchstart="event.preventDefault()" ontouchend="stepLoad(35,-1)" onclick="stepLoad(35,-1)">&#8722;</button><span class="load-count" id="ls35">0</span><button ontouchstart="event.preventDefault()" ontouchend="stepLoad(35,1)" onclick="stepLoad(35,1)">+</button></div><div class="load-max" id="lmax35">max: 0</div></div>
+    <div class="inv-item"><div class="pcircle" style="background:#1b8c2e;color:#fff;">25</div><label>25 lb</label><div class="inv-stepper"><button ontouchstart="event.preventDefault()" ontouchend="stepLoad(25,-1)" onclick="stepLoad(25,-1)">&#8722;</button><span class="load-count" id="ls25">0</span><button ontouchstart="event.preventDefault()" ontouchend="stepLoad(25,1)" onclick="stepLoad(25,1)">+</button></div><div class="load-max" id="lmax25">max: 0</div></div>
+  </div>
+  <div class="inv-grid-2">
+    <div class="inv-item"><div class="pcircle" style="background:#212121;color:#fff;">10</div><label>10 lb</label><div class="inv-stepper"><button ontouchstart="event.preventDefault()" ontouchend="stepLoad(10,-1)" onclick="stepLoad(10,-1)">&#8722;</button><span class="load-count" id="ls10">0</span><button ontouchstart="event.preventDefault()" ontouchend="stepLoad(10,1)" onclick="stepLoad(10,1)">+</button></div><div class="load-max" id="lmax10">max: 0</div></div>
+    <div class="inv-item"><div class="pcircle" style="background:#7dd3fc;color:#0d2a3a;border:3px solid #fff;">5</div><label>5 lb</label><div class="inv-stepper"><button ontouchstart="event.preventDefault()" ontouchend="stepLoad(5,-1)" onclick="stepLoad(5,-1)">&#8722;</button><span class="load-count" id="ls5">0</span><button ontouchstart="event.preventDefault()" ontouchend="stepLoad(5,1)" onclick="stepLoad(5,1)">+</button></div><div class="load-max" id="lmax5">max: 0</div></div>
+  </div>
+  <div class="inv-grid-3">
+    <div class="inv-item"><div class="pcircle" style="background:#86efac;color:#0d2a1a;border:3px solid #fff;">2.5</div><label>2.5 lb</label><div class="inv-stepper"><button ontouchstart="event.preventDefault()" ontouchend="stepLoad(2.5,-1)" onclick="stepLoad(2.5,-1)">&#8722;</button><span class="load-count" id="ls2h">0</span><button ontouchstart="event.preventDefault()" ontouchend="stepLoad(2.5,1)" onclick="stepLoad(2.5,1)">+</button></div><div class="load-max" id="lmax2h">max: 0</div></div>
+    <div class="inv-item"><div class="pcircle" style="background:#f0f0f0;color:#1a1a1a;border:3px solid #aaa;">1.25</div><label>1.25 lb</label><div class="inv-stepper"><button ontouchstart="event.preventDefault()" ontouchend="stepLoad(1.25,-1)" onclick="stepLoad(1.25,-1)">&#8722;</button><span class="load-count" id="ls125">0</span><button ontouchstart="event.preventDefault()" ontouchend="stepLoad(1.25,1)" onclick="stepLoad(1.25,1)">+</button></div><div class="load-max" id="lmax125">max: 0</div></div>
+  </div>
+
+  <button class="clear-btn" ontouchstart="event.preventDefault()" ontouchend="clearLoad()" onclick="clearLoad()">Clear load</button>
+
+  <div class="divider"></div>
+
+  <div class="load-section-label"><span class="load-sec-title">Bilateral bars</span><span class="load-sec-sub">plates &#215; 2 sides</span></div>
+
+  <div class="cols2">
+    <div class="bar-col" id="lcol44">
+      <div class="col-head"><h2>Olympic Bar</h2><div class="bar-name">(REP Colorado Bar)</div><div class="bar-weight">44 lbs (20 kg)</div></div>
+      <div class="stat"><span class="slabel">Total load</span><div class="stat-row"><span class="sval dim" id="ltotal44">44 lbs</span><span id="lstatus44"></span></div></div>
+      <div class="stat"><span class="slabel">Per side</span><span class="sval dim" id="lps44">bar only</span></div>
+      <div class="plates-area"><div class="plates-top"><span class="plabel">Plates per side</span></div><div class="chips" id="lchips44"><span class="chip-none">none selected</span></div></div>
+    </div>
+    <div class="bar-col" id="lcol33">
+      <div class="col-head"><h2>Standard Bar</h2><div class="bar-name">(Rogue Bella Bar 2.0)</div><div class="bar-weight">33 lbs (15 kg)</div></div>
+      <div class="stat"><span class="slabel">Total load</span><div class="stat-row"><span class="sval dim" id="ltotal33">33 lbs</span><span id="lstatus33"></span></div></div>
+      <div class="stat"><span class="slabel">Per side</span><span class="sval dim" id="lps33">bar only</span></div>
+      <div class="plates-area"><div class="plates-top"><span class="plabel">Plates per side</span></div><div class="chips" id="lchips33"><span class="chip-none">none selected</span></div></div>
+    </div>
+  </div>
+
+  <div class="smith-col" id="lcol35">
+    <div class="smith-inner">
+      <div class="smith-head"><h2>Smith Machine</h2><div class="bar-name">(ForceUSA C20)</div><div class="bar-weight">35.5 lbs (16 kg)</div></div>
+      <div class="smith-body">
+        <div class="smith-stats">
+          <div class="smith-stat"><span class="slabel">Total load</span><div class="stat-row"><span class="sval dim" id="ltotal35">35.5 lbs</span><span id="lstatus35"></span></div></div>
+          <div class="smith-stat"><span class="slabel">Per side</span><span class="sval dim" id="lps35">bar only</span></div>
+        </div>
+        <div class="smith-chips"><div class="smith-chips-top"><span class="plabel">Plates per side</span></div><div class="chips" id="lchips35"><span class="chip-none">none selected</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="load-section-label"><span class="load-sec-title">Single-end equipment</span><span class="load-sec-sub">total plates on one end</span></div>
+
+  <div class="cols2">
+    <div class="land-half" id="llandSection">
+      <div class="land-head"><h2>Landmine</h2><div class="bar-name">(REP Colorado Bar)</div><div class="bar-weight">~22 lbs effective</div></div>
+      <div class="land-stat"><span class="slabel">Effective load</span><span class="sval dim" id="ltotalLand">22 lbs</span></div>
+      <div class="land-chips-row"><div class="land-chips-top"><span class="plabel">Plates on end</span></div><div class="chips" id="lchipsLand"><span class="chip-none">none selected</span></div></div>
+    </div>
+    <div class="leg-half" id="llegSection">
+      <div class="leg-head"><div class="leg-head-text"><h2>Leg Developer</h2><div class="leg-sub">Freak Athlete ABX &#8212; single horn</div></div></div>
+      <div class="leg-stat"><span class="slabel">Total load</span><span class="sval dim" id="ltotalLeg">0 lbs</span></div>
+      <div class="leg-chips-row"><div class="leg-chips-top"><span class="plabel">Plates on horn</span></div><div class="chips" id="lchipsLeg"><span class="chip-none">none selected</span></div></div>
+    </div>
+  </div>
+
+</div><!-- end page-load -->
+</div><!-- end .app -->
+
+<script>
+var PLATES=[45,35,25,10,5,2.5,1.25];
+var CHIP_CLS={45:"c45",35:"c35",25:"c25",10:"c10",5:"c5",2.5:"c25s",1.25:"c125"};
+var INV_IDS=["i45","i35","i25","i10","i5","i2h","i125"];
+var INV_VALS=[45,35,25,10,5,2.5,1.25];
+var BARS=[{suffix:"44",weight:44,exact:44.092},{suffix:"33",weight:33,exact:33.069},{suffix:"35",weight:35.5,exact:35.274}];
+var LAND_EFF=22;
+var LOAD_SEL={45:0,35:0,25:0,10:0,5:0,2.5:0,1.25:0};
+var DENOM_TO_LSID={45:'ls45',35:'ls35',25:'ls25',10:'ls10',5:'ls5',2.5:'ls2h',1.25:'ls125'};
+var DENOM_TO_LMID={45:'lmax45',35:'lmax35',25:'lmax25',10:'lmax10',5:'lmax5',2.5:'lmax2h',1.25:'lmax125'};
+
+function getInv(){var inv={};for(var i=0;i<INV_IDS.length;i++)inv[INV_VALS[i]]=parseInt(document.getElementById(INV_IDS[i]).textContent)||0;return inv;}
+function getBarInv(){var inv={};for(var i=0;i<INV_IDS.length;i++)inv[INV_VALS[i]]=Math.floor((parseInt(document.getElementById(INV_IDS[i]).textContent)||0)/2);return inv;}
+function getLegInv(){var inv=getInv();inv[1.25]=0;return inv;}
+function stepInv(id,delta){var el=document.getElementById(id);el.textContent=Math.max(0,(parseInt(el.textContent)||0)+delta);saveInv();update();}
+function findPlates(target,inv){var rounded=Math.round(target/1.25)*1.25,rem=Math.round(rounded*100),plates=[];for(var i=0;i<PLATES.length;i++){var p=PLATES[i],pInt=Math.round(p*100),use=Math.min(inv[p]||0,Math.floor(rem/pInt));for(var j=0;j<use;j++)plates.push(p);rem-=use*pInt;}return{plates:plates,exact:rem===0,leftover:rem/100,rounded:rounded};}
+function fmt(n){return(n%1===0)?String(n):n.toFixed(1);}
+function buildChips(plates){var h="";for(var i=0;i<plates.length;i++)h+='<span class="chip '+CHIP_CLS[plates[i]]+'">'+plates[i]+'</span>';return h;}
+
+function updateCol(bar,tv){
+  var s=bar.suffix,bw=bar.weight,col=document.getElementById("col"+s),tpEl=document.getElementById("tp"+s),psEl=document.getElementById("ps"+s),badgeEl=document.getElementById("badge"+s),chipsEl=document.getElementById("chips"+s),approxEl=document.getElementById("approx"+s),deltaEl=document.getElementById("delta"+s);
+  if(!tv||tv<=0){col.className=col.className.replace(" active","").replace("active","");tpEl.className="sval dim";tpEl.textContent="— lbs";psEl.className="sval dim";psEl.textContent="— lbs";badgeEl.innerHTML="";chipsEl.innerHTML='<span class="chip-none">enter weight</span>';approxEl.innerHTML="";if(deltaEl)deltaEl.innerHTML="";return;}
+  if(tv<bw){col.className=col.className.replace(" active","").replace("active","");tpEl.className="sval err";tpEl.textContent="below bar weight";psEl.className="sval dim";psEl.textContent="—";badgeEl.innerHTML="";chipsEl.innerHTML='<span class="chip-err">Too light</span>';approxEl.innerHTML="";if(deltaEl)deltaEl.innerHTML="";return;}
+  if(col.className.indexOf("active")===-1)col.className+=" active";
+  var tp=Math.round((tv-bw)/2.5)*2.5,ps=tp/2;
+  tpEl.className="sval";tpEl.textContent=fmt(tp)+" lbs";psEl.className="sval accent";psEl.textContent=fmt(ps)+" lbs";
+  if(deltaEl){var aT2=bar.exact+tp,d2=Math.round((aT2-tv)*100)/100;if(d2===0)deltaEl.innerHTML="";else if(d2>0)deltaEl.innerHTML='<span class="delta-over">+'+d2.toFixed(2)+' lbs</span>';else deltaEl.innerHTML='<span class="delta-under">'+d2.toFixed(2)+' lbs</span>';}
+  if(ps===0){badgeEl.innerHTML="";chipsEl.innerHTML='<span class="bar-only">Bar only</span>';approxEl.innerHTML="";return;}
+  var inv=getBarInv(),res=findPlates(ps,inv),aPS=res.rounded-res.leftover,aT=aPS*2+bw;
+  badgeEl.innerHTML=res.exact?'<span class="badge badge-exact">EXACT</span>':'<span class="badge badge-approx">~'+fmt(aT)+' lbs</span>';
+  chipsEl.innerHTML=res.plates.length?buildChips(res.plates):'<span class="chip-err">No solution</span>';
+  approxEl.innerHTML=(!res.exact&&res.plates.length)?'<div class="approx-note">Closest: '+fmt(aPS)+' lbs/side</div>':"";
+}
+function updateLeg(tv){
+  var sec=document.getElementById("legSection"),badgeEl=document.getElementById("legBadge"),chipsEl=document.getElementById("legChips"),approxEl=document.getElementById("legApprox");
+  if(!tv||tv<=0){sec.className="leg-half";badgeEl.innerHTML="";chipsEl.innerHTML='<span class="chip-none">enter weight above</span>';approxEl.innerHTML="";return;}
+  sec.className="leg-half active";var hw=Math.round(tv/5)*5;
+  if(hw===0){badgeEl.innerHTML="";chipsEl.innerHTML='<span class="bar-only">No plates needed</span>';approxEl.innerHTML="";return;}
+  var inv=getLegInv(),res=findPlates(hw,inv),actual=res.rounded-res.leftover;
+  badgeEl.innerHTML=res.exact?'<span class="badge badge-exact">EXACT</span>':'<span class="badge badge-approx">~'+fmt(actual)+' lbs</span>';
+  chipsEl.innerHTML=res.plates.length?buildChips(res.plates):'<span class="chip-err">No solution</span>';
+  approxEl.innerHTML=(!res.exact&&res.plates.length)?'<div class="approx-note">Closest: '+fmt(actual)+' lbs</div>':"";
+}
+function updateLandmine(tv){
+  var sec=document.getElementById("landSection"),badgeEl=document.getElementById("landBadge"),chipsEl=document.getElementById("landChips"),approxEl=document.getElementById("landApprox"),tpEl=document.getElementById("tpLand"),deltaEl=document.getElementById("deltaLand");
+  if(!tv||tv<=0){sec.className="land-half";tpEl.className="sval dim";tpEl.textContent="— lbs";badgeEl.innerHTML="";chipsEl.innerHTML='<span class="chip-none">enter weight above</span>';approxEl.innerHTML="";if(deltaEl)deltaEl.innerHTML="";return;}
+  if(tv<=LAND_EFF){sec.className="land-half";tpEl.className="sval err";tpEl.textContent="below eff. bar";badgeEl.innerHTML="";chipsEl.innerHTML='<span class="chip-err">Too light</span>';approxEl.innerHTML="";if(deltaEl)deltaEl.innerHTML="";return;}
+  sec.className="land-half active";var tp=Math.round((tv-LAND_EFF)/2.5)*2.5;
+  tpEl.className="sval";tpEl.textContent=fmt(tp)+" lbs";
+  if(deltaEl){var at=LAND_EFF+tp,dl=Math.round((at-tv)*100)/100;if(dl===0)deltaEl.innerHTML="";else if(dl>0)deltaEl.innerHTML='<span class="delta-over">+'+dl.toFixed(2)+' lbs</span>';else deltaEl.innerHTML='<span class="delta-under">'+dl.toFixed(2)+' lbs</span>';}
+  if(tp===0){badgeEl.innerHTML="";chipsEl.innerHTML='<span class="bar-only">Eff. bar only</span>';approxEl.innerHTML="";return;}
+  var inv=getInv(),res=findPlates(tp,inv),actual=res.rounded-res.leftover;
+  badgeEl.innerHTML=res.exact?'<span class="badge badge-exact">EXACT</span>':'<span class="badge badge-approx">~'+fmt(actual+LAND_EFF)+' lbs</span>';
+  chipsEl.innerHTML=res.plates.length?buildChips(res.plates):'<span class="chip-err">No solution</span>';
+  approxEl.innerHTML=(!res.exact&&res.plates.length)?'<div class="approx-note">Closest: '+fmt(actual)+' lbs</div>':"";
+}
+function update(){var val=parseFloat(document.getElementById("totalWeight").value)||0;for(var i=0;i<BARS.length;i++)updateCol(BARS[i],val);updateLeg(val);updateLandmine(val);}
+
+function saveInv(){try{var obj={};for(var i=0;i<INV_IDS.length;i++)obj[INV_IDS[i]]=document.getElementById(INV_IDS[i]).textContent;localStorage.setItem("plc_inv",JSON.stringify(obj));}catch(e){}}
+function loadInv(){try{var saved=localStorage.getItem("plc_inv");if(!saved)return;var obj=JSON.parse(saved);var ok=true;for(var i=0;i<INV_IDS.length;i++){if(obj[INV_IDS[i]]===undefined){ok=false;break;}}if(!ok){localStorage.removeItem("plc_inv");return;}for(var i=0;i<INV_IDS.length;i++)document.getElementById(INV_IDS[i]).textContent=obj[INV_IDS[i]];}catch(e){}}
+function clearWeight(){document.getElementById("totalWeight").value="";update();}
+function stepUp(e){if(e)e.preventDefault();var el=document.getElementById("totalWeight");el.value=(parseFloat(el.value)||0)+5;update();}
+function stepDn(e){if(e)e.preventDefault();var el=document.getElementById("totalWeight");el.value=Math.max(0,(parseFloat(el.value)||0)-5);update();}
+var btnUp=document.getElementById("btnUp"),btnDn=document.getElementById("btnDn");
+btnUp.addEventListener("touchstart",function(e){e.preventDefault();},{passive:false});
+btnUp.addEventListener("touchend",stepUp,{passive:false});btnUp.addEventListener("click",stepUp);
+btnDn.addEventListener("touchstart",function(e){e.preventDefault();},{passive:false});
+btnDn.addEventListener("touchend",stepDn,{passive:false});btnDn.addEventListener("click",stepDn);
+document.getElementById("totalWeight").addEventListener("input",update);
+
+function switchTab(tab){
+  if(tab==='load'){
+    clearLoad();updateLoadMaxLabels();
+    document.getElementById('page-calc').classList.add('hidden');
+    document.getElementById('page-load').classList.remove('hidden');
+    document.getElementById('tab-calc').classList.remove('active');
+    document.getElementById('tab-load').classList.add('active');
+  } else {
+    document.getElementById('page-load').classList.add('hidden');
+    document.getElementById('page-calc').classList.remove('hidden');
+    document.getElementById('tab-load').classList.remove('active');
+    document.getElementById('tab-calc').classList.add('active');
+  }
+}
+
+function stepLoad(denom,delta){
+  var inv=getInv(),max=inv[denom]||0,el=document.getElementById(DENOM_TO_LSID[denom]);
+  LOAD_SEL[denom]=Math.max(0,Math.min(max,(LOAD_SEL[denom]||0)+delta));
+  el.textContent=LOAD_SEL[denom];
+  var bMax=Math.floor(max/2);
+  el.className=(LOAD_SEL[denom]>bMax&&LOAD_SEL[denom]>0)?'load-count warn':'load-count';
+  updateLoad();
+}
+function clearLoad(){
+  for(var i=0;i<INV_VALS.length;i++){var d=INV_VALS[i];LOAD_SEL[d]=0;var el=document.getElementById(DENOM_TO_LSID[d]);if(el){el.textContent='0';el.className='load-count';}}
+  updateLoad();
+}
+function updateLoadMaxLabels(){
+  var inv=getInv();
+  for(var i=0;i<INV_VALS.length;i++){var d=INV_VALS[i];var el=document.getElementById(DENOM_TO_LMID[d]);if(el)el.textContent='max: '+(inv[d]||0);}
+}
+function buildLoadChips(){
+  var h='';
+  for(var i=0;i<INV_VALS.length;i++){var d=INV_VALS[i];var cnt=LOAD_SEL[d]||0;for(var j=0;j<cnt;j++)h+='<span class="chip '+CHIP_CLS[d]+'">'+d+'</span>';}
+  return h;
+}
+function updateLoad(){
+  var inv=getInv(),exceeds=false;
+  for(var i=0;i<INV_VALS.length;i++){var d=INV_VALS[i];if((LOAD_SEL[d]||0)*2>(inv[d]||0)){exceeds=true;break;}}
+  var plateWt=0;
+  for(var i=0;i<INV_VALS.length;i++)plateWt+=(LOAD_SEL[INV_VALS[i]]||0)*INV_VALS[i];
+  var hasPlates=plateWt>0,chipsHtml=buildLoadChips();
+
+  var bilat=[{s:'44',bw:44},{s:'33',bw:33},{s:'35',bw:35.5}];
+  for(var b=0;b<bilat.length;b++){
+    var bar=bilat[b],totalLoad=bar.bw+plateWt*2;
+    var colEl=document.getElementById('lcol'+bar.s),totalEl=document.getElementById('ltotal'+bar.s);
+    var psEl=document.getElementById('lps'+bar.s),statusEl=document.getElementById('lstatus'+bar.s),chipsEl=document.getElementById('lchips'+bar.s);
+    if(!hasPlates){
+      if(colEl)colEl.className='bar-col';
+      totalEl.className='sval dim';totalEl.style.color='';totalEl.textContent=fmt(bar.bw)+' lbs';
+      psEl.className='sval dim';psEl.textContent='bar only';
+      if(statusEl)statusEl.innerHTML='';
+      chipsEl.innerHTML='<span class="chip-none">none selected</span>';
+    } else if(exceeds){
+      if(colEl&&colEl.className.indexOf('active')===-1)colEl.className+=' active';
+      totalEl.className='sval';totalEl.style.color='#991b1b';totalEl.textContent=fmt(totalLoad)+' lbs';
+      psEl.className='sval dim';psEl.textContent=fmt(plateWt)+' lbs/side';
+      if(statusEl)statusEl.innerHTML='<span class="badge-exceeds">Exceeds Inventory</span>';
+      chipsEl.innerHTML=chipsHtml||'<span class="chip-none">none selected</span>';
+    } else {
+      if(colEl&&colEl.className.indexOf('active')===-1)colEl.className+=' active';
+      totalEl.className='sval accent';totalEl.style.color='';totalEl.textContent=fmt(totalLoad)+' lbs';
+      psEl.className='sval accent';psEl.textContent=fmt(plateWt)+' lbs/side';
+      if(statusEl)statusEl.innerHTML='';
+      chipsEl.innerHTML=chipsHtml||'<span class="chip-none">none selected</span>';
+    }
+  }
+
+  var landTotal=LAND_EFF+plateWt,llandEl=document.getElementById('ltotalLand'),llandSec=document.getElementById('llandSection'),llandChips=document.getElementById('lchipsLand');
+  if(!hasPlates){if(llandSec)llandSec.className='land-half';llandEl.className='sval dim';llandEl.textContent=fmt(LAND_EFF)+' lbs';llandChips.innerHTML='<span class="chip-none">none selected</span>';}
+  else{if(llandSec)llandSec.className='land-half active';llandEl.className='sval';llandEl.textContent=fmt(landTotal)+' lbs';llandChips.innerHTML=chipsHtml||'<span class="chip-none">none selected</span>';}
+
+  var llegEl=document.getElementById('ltotalLeg'),llegSec=document.getElementById('llegSection'),llegChips=document.getElementById('lchipsLeg');
+  if(!hasPlates){if(llegSec)llegSec.className='leg-half';llegEl.className='sval dim';llegEl.style.color='';llegEl.textContent='0 lbs';llegChips.innerHTML='<span class="chip-none">none selected</span>';}
+  else{if(llegSec)llegSec.className='leg-half active';llegEl.className='sval';llegEl.style.color='var(--leg-accent)';llegEl.textContent=fmt(plateWt)+' lbs';llegChips.innerHTML=chipsHtml||'<span class="chip-none">none selected</span>';}
+}
+
+function fetchWeatherFromCoords(lat,lon,city,el){
+  var WEATHER_TTL=60*60*1000;
+  try{var w=JSON.parse(localStorage.getItem('pc_weather'));if(w&&w.html&&(Date.now()-w.ts)<WEATHER_TTL){return;}}catch(e){}
+  var url='https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&current=temperature_2m,weathercode&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch&timezone=auto&forecast_days=1';
+  fetch(url).then(function(r){return r.json();}).then(function(d){
+    var cur=Math.round(d.current.temperature_2m),hi=Math.round(d.daily.temperature_2m_max[0]),lo=Math.round(d.daily.temperature_2m_min[0]),prec=d.daily.precipitation_probability_max[0];
+    var loc=city?city+' &nbsp;&#183;&nbsp; ':'';
+    var html=loc+'<span class="wtemp">'+cur+'&#176;F</span> <span>'+weatherDesc(d.current.weathercode)+'</span> &nbsp;H:'+hi+'&#176; L:'+lo+'&#176; &nbsp;<span class="wprecip">&#9831;'+prec+'%</span>';
+    el.innerHTML=html;try{localStorage.setItem('pc_weather',JSON.stringify({html:html,ts:Date.now()}));}catch(e){}
+  }).catch(function(){if(!el.innerHTML||el.innerHTML.indexOf('Loading')!==-1)el.innerHTML='<span style="color:#8a94b0;font-style:italic;">Weather unavailable</span>';});
+}
+function resolveAndFetch(lat,lon,el){
+  try{var c=JSON.parse(localStorage.getItem('pc_coords'));if(c&&c.city!==undefined&&Math.abs(c.lat-parseFloat(lat))<0.05&&Math.abs(c.lon-parseFloat(lon))<0.05){try{localStorage.setItem('pc_coords',JSON.stringify({lat:lat,lon:lon,city:c.city}));}catch(e){}fetchWeatherFromCoords(lat,lon,c.city,el);return;}}catch(e){}
+  fetch('https://nominatim.openstreetmap.org/reverse?lat='+lat+'&lon='+lon+'&format=json&zoom=10&accept-language=en').then(function(r){return r.json();}).then(function(d){var city=d.address.city||d.address.town||d.address.village||d.address.county||'';try{localStorage.setItem('pc_coords',JSON.stringify({lat:lat,lon:lon,city:city}));}catch(e){}fetchWeatherFromCoords(lat,lon,city,el);}).catch(function(){try{localStorage.setItem('pc_coords',JSON.stringify({lat:lat,lon:lon,city:''}));}catch(e){}fetchWeatherFromCoords(lat,lon,'',el);});
+}
+function loadWeather(){
+  var el=document.getElementById('weatherLine');
+  try{var w=JSON.parse(localStorage.getItem('pc_weather'));if(w&&w.html)el.innerHTML=w.html;}catch(e){}
+  if(!navigator.geolocation){try{var c=JSON.parse(localStorage.getItem('pc_coords'));if(c&&c.lat)fetchWeatherFromCoords(c.lat,c.lon,c.city||'',el);}catch(e){}return;}
+  navigator.geolocation.getCurrentPosition(function(pos){var lat=pos.coords.latitude.toFixed(4),lon=pos.coords.longitude.toFixed(4);resolveAndFetch(lat,lon,el);},function(){try{var c=JSON.parse(localStorage.getItem('pc_coords'));if(c&&c.lat)fetchWeatherFromCoords(c.lat,c.lon,c.city||'',el);}catch(e){}},{timeout:8000,maximumAge:300000});
+}
+function weatherDesc(code){if(code===0)return'Clear';if(code<=2)return'Partly cloudy';if(code===3)return'Overcast';if(code<=49)return'Foggy';if(code<=59)return'Drizzle';if(code<=69)return'Rain';if(code<=79)return'Snow';if(code<=84)return'Rain showers';if(code<=94)return'Thunderstorm';return'Stormy';}
+
+loadInv();update();loadWeather();
+</script>
+</body>
+</html>
