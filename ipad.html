@@ -136,7 +136,7 @@ html, body { background:var(--bg); color:var(--text); font-family:-apple-system,
   <div>
     <h1>Plate &amp; Load Calc</h1>
     <p>For Fitbod barbell lifts</p>
-    <p style="font-size:13px;color:#7a8099;margin-top:3px;font-weight:600;">v1.0</p>
+    <p style="font-size:13px;color:#7a8099;margin-top:3px;font-weight:600;">v1.1</p>
     <p class="weather-line" id="weatherLine"><span style="color:#8a94b0;font-style:italic;">Loading weather...</span></p>
   </div>
   <div class="barbell-icon">
@@ -415,10 +415,10 @@ function updateLoad(){
       chipsEl.innerHTML='<span class="chip-none">none selected</span>';
     } else if(exceeds){
       if(colEl&&colEl.className.indexOf('active')===-1)colEl.className+=' active';
-      totalEl.className='sval';totalEl.style.color='#991b1b';totalEl.textContent=fmt(totalLoad)+' lbs';
-      psEl.className='sval dim';psEl.textContent=fmt(plateWt)+' lbs/side';
+      totalEl.className='sval dim';totalEl.style.color='';totalEl.textContent='— lbs';
+      psEl.className='sval dim';psEl.textContent='—';
       if(statusEl)statusEl.innerHTML='<span class="badge-exceeds">Exceeds Inventory</span>';
-      chipsEl.innerHTML=chipsHtml||'<span class="chip-none">none selected</span>';
+      chipsEl.innerHTML='<span class="chip-err">Cannot load — insufficient plates</span>';
     } else {
       if(colEl&&colEl.className.indexOf('active')===-1)colEl.className+=' active';
       totalEl.className='sval accent';totalEl.style.color='';totalEl.textContent=fmt(totalLoad)+' lbs';
