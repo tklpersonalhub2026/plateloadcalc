@@ -18,6 +18,7 @@
 --card-green:#166534; --card-amber:#92400e; --card-red:#991b1b;
 --leg-bg:#fff8f0; --leg-border:#e8d5b0; --leg-header:#f5e8cc; --leg-accent:#b45309;
 --land-bg:#f0f4ff; --land-border:#b8c8f0; --land-header:#dce8ff; --land-accent:#2563eb;
+--lp-bg:#f0fdf9; --lp-border:#a7d9cb; --lp-header:#d6f5ec; --lp-accent:#0f766e;
 --safe-top:env(safe-area-inset-top,0px); --safe-bottom:env(safe-area-inset-bottom,0px);
 }
 * { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
@@ -102,6 +103,36 @@ html, body { background:var(--bg); color:var(--text); font-family:-apple-system,
 .land-stat { padding:12px 16px; border-bottom:1px solid #c0d0f0; }
 .land-chips-row { padding:12px 16px 16px; background:var(--land-bg); }
 .land-chips-top { display:flex; align-items:center; gap:8px; margin-bottom:10px; }
+/* Leg Press / Hack Squat */
+.lp-half { display:table-cell; background:var(--lp-bg); border:2px solid var(--lp-border); border-radius:18px; overflow:hidden; vertical-align:top; }
+.lp-half.active { border-color:var(--lp-accent); border-width:3px; }
+.lp-full { background:var(--lp-bg); border:2px solid var(--lp-border); border-radius:18px; overflow:hidden; }
+.lp-full.active { border-color:var(--lp-accent); border-width:3px; }
+.lp-head { background:var(--lp-header); padding:14px 16px; border-bottom:1.5px solid var(--lp-border); }
+.lp-head h2 { font-size:20px; font-weight:800; color:var(--card-text); }
+.lp-head .bar-name { font-size:13px; color:var(--card-muted); margin-top:3px; font-style:italic; }
+.lp-head .bar-weight { font-size:13px; color:var(--card-muted); margin-top:2px; }
+.lp-stat { padding:12px 16px; border-bottom:1px solid #c6e6db; }
+.lp-stats-row { display:flex; border-bottom:1px solid #c6e6db; }
+.lp-stats-row > div { flex:1; padding:12px 16px; border-right:1px solid #c6e6db; }
+.lp-stats-row > div:last-child { border-right:none; }
+.lp-chips-row { padding:12px 16px 16px; background:var(--lp-bg); }
+.lp-chips-top { display:flex; align-items:center; gap:8px; margin-bottom:10px; }
+.sval.lp { color:var(--lp-accent); }
+.eff-note { font-size:13px; color:var(--lp-accent); font-weight:700; margin-top:10px; line-height:1.6; }
+.eff-note span { color:var(--card-muted); font-weight:600; }
+/* Body weight card */
+.bw-card { background:var(--card-bg); border:2px solid var(--card-border); border-radius:18px; padding:18px 22px; }
+.bw-row { display:flex; align-items:center; gap:14px; }
+#bodyWeight { flex:1; min-width:0; background:#f0fdf9; border:3px solid var(--lp-border); border-radius:12px; color:var(--card-text); font-size:56px; font-weight:900; text-align:center; padding:8px 8px; outline:none; -webkit-appearance:textfield; appearance:textfield; letter-spacing:-2px; line-height:1; }
+#bodyWeight:focus { border-color:var(--lp-accent); }
+#bodyWeight::placeholder { color:#b0bcd0; }
+.bw-steppers { display:flex; gap:8px; flex-shrink:0; }
+.bw-steppers button { width:66px; height:60px; background:var(--lp-header); border:2px solid var(--lp-border); border-radius:12px; color:var(--card-text); font-size:26px; font-weight:700; display:flex; align-items:center; justify-content:center; cursor:pointer; touch-action:manipulation; -webkit-user-select:none; user-select:none; }
+.bw-steppers button:active { background:#b6e8da; }
+.bw-note { font-size:14px; color:var(--card-muted); margin-top:12px; line-height:1.5; }
+.bw-note b { color:var(--lp-accent); }
+.bw-synced { font-size:13px; font-weight:800; color:#166534; background:#dcfce7; padding:3px 8px; border-radius:20px; }
 /* Divider */
 .divider { height:1px; background:var(--border2); }
 /* Inventory */
@@ -136,7 +167,7 @@ html, body { background:var(--bg); color:var(--text); font-family:-apple-system,
   <div>
     <h1>Plate &amp; Load Calc</h1>
     <p>For Fitbod barbell lifts</p>
-    <p style="font-size:13px;color:#7a8099;margin-top:3px;font-weight:600;">v1.2</p>
+    <p style="font-size:13px;color:#7a8099;margin-top:3px;font-weight:600;">v1.3</p>
     <p class="weather-line" id="weatherLine"><span style="color:#8a94b0;font-style:italic;">Loading weather...</span></p>
   </div>
   <div class="barbell-icon">
@@ -192,8 +223,8 @@ html, body { background:var(--bg); color:var(--text); font-family:-apple-system,
     </div>
   </div>
 
-  <!-- Landmine + Leg Developer -->
-  <div class="cols2">
+  <!-- Landmine + Leg Developer + Leg Press -->
+  <div class="cols">
     <div class="land-half" id="landSection">
       <div class="land-head"><h2>Landmine</h2><div class="bar-name">(REP Colorado Bar)</div><div class="bar-weight">44 lbs bar &#183; ~22 lbs effective (lever)</div></div>
       <div class="land-stat" style="display:flex;align-items:baseline;justify-content:space-between;"><div><span class="slabel">Total plates</span><span class="sval dim" id="tpLand">&#8212; lbs</span></div><span id="deltaLand"></span></div>
@@ -202,6 +233,12 @@ html, body { background:var(--bg); color:var(--text); font-family:-apple-system,
     <div class="leg-half" id="legSection">
       <div class="leg-head"><div class="leg-head-text"><h2>Leg Developer</h2><div class="leg-sub">Freak Athlete ABX &#8212; single horn</div></div><span id="legBadge" style="margin-left:auto;"></span></div>
       <div class="leg-chips-row"><div class="leg-chips-top"><span class="plabel">Plates on horn</span></div><div class="chips" id="legChips"><span class="chip-none">enter weight above</span></div><div id="legApprox"></div></div>
+    </div>
+    <div class="lp-half" id="lpSection">
+      <div class="lp-head"><h2>Leg Press</h2><div class="bar-name">(Force USA Compact &#8212; hack squat / calf)</div><div class="bar-weight">38 lb sled &#183; 30&#176; incline &#183; two horns</div></div>
+      <div class="lp-stat" style="display:flex;align-items:baseline;justify-content:space-between;"><div><span class="slabel">Total plates</span><span class="sval dim" id="tpLP">&#8212; lbs</span></div><span id="deltaLP"></span></div>
+      <div class="lp-stat"><span class="slabel">Per horn</span><span class="sval dim" id="psLP">&#8212; lbs</span></div>
+      <div class="lp-chips-row"><div class="lp-chips-top"><span class="plabel">Plates per horn</span><span id="lpBadge"></span></div><div class="chips" id="lpChips"><span class="chip-none">enter weight above</span></div><div id="lpApprox"></div><div class="eff-note" id="lpEff"></div></div>
     </div>
   </div>
 
@@ -219,6 +256,18 @@ html, body { background:var(--bg); color:var(--text); font-family:-apple-system,
     <div class="inv-item"><div class="pcircle" style="background:#7dd3fc;color:#0d2a3a;border:3px solid #fff;">5</div><label>5 lb plates</label><div class="inv-stepper"><button ontouchstart="event.preventDefault()" ontouchend="stepInv('i5',-1)" onclick="stepInv('i5',-1)">&#8722;</button><span class="inv-count" id="i5">2</span><button ontouchstart="event.preventDefault()" ontouchend="stepInv('i5',1)" onclick="stepInv('i5',1)">+</button></div></div>
     <div class="inv-item"><div class="pcircle" style="background:#86efac;color:#0d2a1a;border:3px solid #fff;">2.5</div><label>2.5 lb plates</label><div class="inv-stepper"><button ontouchstart="event.preventDefault()" ontouchend="stepInv('i2h',-1)" onclick="stepInv('i2h',-1)">&#8722;</button><span class="inv-count" id="i2h">2</span><button ontouchstart="event.preventDefault()" ontouchend="stepInv('i2h',1)" onclick="stepInv('i2h',1)">+</button></div></div>
     <div class="inv-item"><div class="pcircle" style="background:#f0f0f0;color:#1a1a1a;border:3px solid #aaa;">1.25</div><label>1.25 lb plates</label><div class="inv-stepper"><button ontouchstart="event.preventDefault()" ontouchend="stepInv('i125',-1)" onclick="stepInv('i125',-1)">&#8722;</button><span class="inv-count" id="i125">2</span><button ontouchstart="event.preventDefault()" ontouchend="stepInv('i125',1)" onclick="stepInv('i125',1)">+</button></div></div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="inv-header"><div class="inv-title">Body weight</div><div class="inv-sub" id="bwSubLabel">Saved until you change it</div></div>
+  <div class="bw-card">
+    <div class="bw-row">
+      <input type="number" id="bodyWeight" placeholder="185" min="0" step="1" inputmode="decimal"/>
+      <span class="lbs-label">lbs</span>
+      <div class="bw-steppers"><button id="bwDn">&#8722;</button><button id="bwUp">+</button></div>
+    </div>
+    <div class="bw-note" id="bwNote"></div>
   </div>
 
   <button class="reset-btn" ontouchstart="event.preventDefault()" ontouchend="clearWeight()" onclick="clearWeight()">Clear weight</button>
@@ -268,6 +317,15 @@ html, body { background:var(--bg); color:var(--text); font-family:-apple-system,
     </div>
   </div>
 
+  <div class="lp-full" id="lcolLP">
+    <div class="lp-head"><h2>Leg Press / Hack Squat</h2><div class="bar-name">(Force USA Compact &#8212; two horns)</div><div class="bar-weight">38 lb sled &#183; 30&#176; incline</div></div>
+    <div class="lp-stats-row">
+      <div><span class="slabel">Plates + sled</span><div class="stat-row"><span class="sval dim" id="ltotalLP">38 lbs</span><span id="lstatusLP"></span></div></div>
+      <div><span class="slabel">Per horn</span><span class="sval dim" id="lpsLP">sled only</span></div>
+    </div>
+    <div class="lp-chips-row"><div class="lp-chips-top"><span class="plabel">Plates per horn</span></div><div class="chips" id="lchipsLP"><span class="chip-none">none selected</span></div><div class="eff-note" id="lEffLP"></div></div>
+  </div>
+
   <div class="divider"></div>
   <div class="load-section-label"><span class="load-sec-title">Single-end equipment</span><span class="load-sec-sub">total plates on one end</span></div>
 
@@ -294,6 +352,13 @@ var INV_IDS=["i45","i35","i25","i10","i5","i2h","i125"];
 var INV_VALS=[45,35,25,10,5,2.5,1.25];
 var BARS=[{suffix:"44",weight:44,exact:44.092},{suffix:"33",weight:33,exact:33.069},{suffix:"35",weight:35.5,exact:35.274}];
 var LAND_EFF=22;
+/* ── Leg Press / Hack Squat (Force USA Compact) ──
+   Basis: Fitbod's target = PLATE weight on the horns (two horns, symmetric).
+   Sled + incline are used only to report true effective resistance.       */
+var LP_SLED=38;            // starting sled weight, lbs
+var LP_ANGLE=30;           // incline measured from horizontal, degrees
+var LP_SIN=Math.sin(LP_ANGLE*Math.PI/180);   // 0.5 at 30 deg
+var LP_BW_FRAC=0.85;       // share of body weight above the knees (hack squat)
 var LOAD_SEL={45:0,35:0,25:0,10:0,5:0,2.5:0,1.25:0};
 var DENOM_TO_LSID={45:'ls45',35:'ls35',25:'ls25',10:'ls10',5:'ls5',2.5:'ls2h',1.25:'ls125'};
 var DENOM_TO_LMID={45:'lmax45',35:'lmax35',25:'lmax25',10:'lmax10',5:'lmax5',2.5:'lmax2h',1.25:'lmax125'};
@@ -345,10 +410,73 @@ function updateLandmine(tv){
   chipsEl.innerHTML=res.plates.length?buildChips(res.plates):'<span class="chip-err">No solution</span>';
   approxEl.innerHTML=(!res.exact&&res.plates.length)?'<div class="approx-note">Closest: '+fmt(actual)+' lbs</div>':"";
 }
-function update(){var val=parseFloat(document.getElementById("totalWeight").value)||0;for(var i=0;i<BARS.length;i++)updateCol(BARS[i],val);updateLeg(val);updateLandmine(val);}
+function getBW(){return parseFloat(document.getElementById("bodyWeight").value)||0;}
+/* Effective resistance the legs actually push, along the 30-deg sled path. */
+function lpEffective(plateWt){return (plateWt+LP_SLED)*LP_SIN;}
+function lpHackEffective(plateWt,bw){return lpEffective(plateWt)+(bw*LP_BW_FRAC*LP_SIN);}
+function lpEffHtml(plateWt){
+  var bw=getBW(),press=lpEffective(plateWt);
+  var h='Leg press eff. <span>'+press.toFixed(1)+' lbs</span>';
+  if(bw>0)h+='<br>Hack squat eff. <span>'+lpHackEffective(plateWt,bw).toFixed(1)+' lbs</span>';
+  else h+='<br><span>add body weight below for hack squat</span>';
+  return h;
+}
+function updateLegPress(tv){
+  var sec=document.getElementById("lpSection"),tpEl=document.getElementById("tpLP"),psEl=document.getElementById("psLP"),
+      badgeEl=document.getElementById("lpBadge"),chipsEl=document.getElementById("lpChips"),
+      approxEl=document.getElementById("lpApprox"),effEl=document.getElementById("lpEff"),dEl=document.getElementById("deltaLP");
+  if(!tv||tv<=0){sec.className="lp-half";tpEl.className="sval dim";tpEl.textContent="— lbs";psEl.className="sval dim";psEl.textContent="— lbs";badgeEl.innerHTML="";chipsEl.innerHTML='<span class="chip-none">enter weight above</span>';approxEl.innerHTML="";effEl.innerHTML="";if(dEl)dEl.innerHTML="";return;}
+  sec.className="lp-half active";
+  var tp=Math.round(tv/2.5)*2.5,ph=tp/2;
+  tpEl.className="sval";tpEl.textContent=fmt(tp)+" lbs";
+  psEl.className="sval lp";psEl.textContent=fmt(ph)+" lbs";
+  if(dEl){var dp=Math.round((tp-tv)*100)/100;if(dp===0)dEl.innerHTML="";else if(dp>0)dEl.innerHTML='<span class="delta-over">+'+dp.toFixed(2)+' lbs</span>';else dEl.innerHTML='<span class="delta-under">'+dp.toFixed(2)+' lbs</span>';}
+  if(ph===0){badgeEl.innerHTML="";chipsEl.innerHTML='<span class="bar-only">Sled only</span>';approxEl.innerHTML="";effEl.innerHTML=lpEffHtml(0);return;}
+  var inv=getBarInv(),res=findPlates(ph,inv),aPH=res.rounded-res.leftover,aT=aPH*2;
+  badgeEl.innerHTML=res.exact?'<span class="badge badge-exact">EXACT</span>':'<span class="badge badge-approx">~'+fmt(aT)+' lbs</span>';
+  chipsEl.innerHTML=res.plates.length?buildChips(res.plates):'<span class="chip-err">No solution</span>';
+  approxEl.innerHTML=(!res.exact&&res.plates.length)?'<div class="approx-note">Closest: '+fmt(aPH)+' lbs/horn</div>':"";
+  effEl.innerHTML=lpEffHtml(aT);
+}
+function update(){var val=parseFloat(document.getElementById("totalWeight").value)||0;for(var i=0;i<BARS.length;i++)updateCol(BARS[i],val);updateLeg(val);updateLandmine(val);updateLegPress(val);}
 
 function saveInv(){try{var obj={};for(var i=0;i<INV_IDS.length;i++)obj[INV_IDS[i]]=document.getElementById(INV_IDS[i]).textContent;localStorage.setItem("plc_inv_ipad",JSON.stringify(obj));}catch(e){}}
 function loadInv(){try{var saved=localStorage.getItem("plc_inv_ipad");if(!saved)return;var obj=JSON.parse(saved);var ok=true;for(var i=0;i<INV_IDS.length;i++){if(obj[INV_IDS[i]]===undefined){ok=false;break;}}if(!ok){localStorage.removeItem("plc_inv_ipad");return;}for(var i=0;i<INV_IDS.length;i++)document.getElementById(INV_IDS[i]).textContent=obj[INV_IDS[i]];}catch(e){}}
+/* ── Body weight: persistent like the plate inventory ──
+   Also accepts ?bw=NNN in the URL so an iOS Shortcut can push Apple Health
+   weight straight into the app. See BODY_WEIGHT_AUTOMATION.md.            */
+function saveBW(){try{var v=document.getElementById("bodyWeight").value;localStorage.setItem("plc_bw_ipad",v);}catch(e){}}
+function renderBWNote(src,when){
+  var note=document.getElementById("bwNote"),sub=document.getElementById("bwSubLabel"),bw=getBW();
+  if(!note)return;
+  var h='';
+  if(bw>0)h+='Hack squat adds <b>'+(bw*LP_BW_FRAC*LP_SIN).toFixed(1)+' lbs</b> of resistance ('+Math.round(LP_BW_FRAC*100)+'% of body weight &#215; sin 30&#176;).';
+  else h+='Enter your weight to see hack squat resistance.';
+  if(src==='url'){h+=' <span class="bw-synced">synced from Health</span>';if(sub)sub.textContent='Auto-synced '+(when||'');}
+  note.innerHTML=h;
+}
+function setBW(v,src){
+  var el=document.getElementById("bodyWeight");
+  el.value=(v===''||v===null||isNaN(v))?'':v;
+  saveBW();update();renderBWNote(src,new Date().toLocaleDateString());
+}
+function loadBW(){
+  var fromUrl=null;
+  try{var m=window.location.search.match(/[?&]bw=([0-9.]+)/);if(m)fromUrl=parseFloat(m[1]);}catch(e){}
+  if(fromUrl&&fromUrl>0&&fromUrl<1000){setBW(fromUrl,'url');return;}
+  try{var s=localStorage.getItem("plc_bw_ipad");if(s!==null&&s!=='')document.getElementById("bodyWeight").value=s;}catch(e){}
+  renderBWNote();
+}
+function stepBW(delta){var el=document.getElementById("bodyWeight");var v=parseFloat(el.value)||0;el.value=Math.max(0,Math.round((v+delta)*10)/10);saveBW();update();renderBWNote();}
+document.getElementById("bodyWeight").addEventListener("input",function(){saveBW();update();renderBWNote();});
+var bwUpB=document.getElementById("bwUp"),bwDnB=document.getElementById("bwDn");
+bwUpB.addEventListener("touchstart",function(e){e.preventDefault();},{passive:false});
+bwUpB.addEventListener("touchend",function(e){e.preventDefault();stepBW(1);},{passive:false});
+bwUpB.addEventListener("click",function(){stepBW(1);});
+bwDnB.addEventListener("touchstart",function(e){e.preventDefault();},{passive:false});
+bwDnB.addEventListener("touchend",function(e){e.preventDefault();stepBW(-1);},{passive:false});
+bwDnB.addEventListener("click",function(){stepBW(-1);});
+
 function clearWeight(){document.getElementById("totalWeight").value="";update();}
 function stepUp(e){if(e)e.preventDefault();var el=document.getElementById("totalWeight");el.value=(parseFloat(el.value)||0)+5;update();}
 function stepDn(e){if(e)e.preventDefault();var el=document.getElementById("totalWeight");el.value=Math.max(0,(parseFloat(el.value)||0)-5);update();}
@@ -428,6 +556,35 @@ function updateLoad(){
     }
   }
 
+  /* Leg Press — two horns, so plates x 2, plus the 38 lb sled */
+  var lpColEl=document.getElementById('lcolLP'),lpTotEl=document.getElementById('ltotalLP'),
+      lpPsEl=document.getElementById('lpsLP'),lpStatEl=document.getElementById('lstatusLP'),
+      lpChipsEl=document.getElementById('lchipsLP'),lpEffEl=document.getElementById('lEffLP');
+  if(lpColEl){
+    if(!hasPlates){
+      lpColEl.className='lp-full';
+      lpTotEl.className='sval dim';lpTotEl.textContent=fmt(LP_SLED)+' lbs';
+      lpPsEl.className='sval dim';lpPsEl.textContent='sled only';
+      if(lpStatEl)lpStatEl.innerHTML='';
+      lpChipsEl.innerHTML='<span class="chip-none">none selected</span>';
+      lpEffEl.innerHTML=lpEffHtml(0);
+    } else if(exceeds){
+      lpColEl.className='lp-full active';
+      lpTotEl.className='sval dim';lpTotEl.textContent='— lbs';
+      lpPsEl.className='sval dim';lpPsEl.textContent='—';
+      if(lpStatEl)lpStatEl.innerHTML='<span class="badge-exceeds">Exceeds Inventory</span>';
+      lpChipsEl.innerHTML='<span class="chip-err">Cannot load — insufficient plates</span>';
+      lpEffEl.innerHTML='';
+    } else {
+      lpColEl.className='lp-full active';
+      lpTotEl.className='sval lp';lpTotEl.textContent=fmt(plateWt*2+LP_SLED)+' lbs';
+      lpPsEl.className='sval lp';lpPsEl.textContent=fmt(plateWt)+' lbs/horn';
+      if(lpStatEl)lpStatEl.innerHTML='';
+      lpChipsEl.innerHTML=chipsHtml||'<span class="chip-none">none selected</span>';
+      lpEffEl.innerHTML=lpEffHtml(plateWt*2);
+    }
+  }
+
   var landTotal=LAND_EFF+plateWt,llandEl=document.getElementById('ltotalLand'),llandSec=document.getElementById('llandSection'),llandChips=document.getElementById('lchipsLand');
   if(!hasPlates){if(llandSec)llandSec.className='land-half';llandEl.className='sval dim';llandEl.textContent=fmt(LAND_EFF)+' lbs';llandChips.innerHTML='<span class="chip-none">none selected</span>';}
   else{if(llandSec)llandSec.className='land-half active';llandEl.className='sval';llandEl.textContent=fmt(landTotal)+' lbs';llandChips.innerHTML=chipsHtml||'<span class="chip-none">none selected</span>';}
@@ -460,7 +617,7 @@ function loadWeather(){
 }
 function weatherDesc(code){if(code===0)return'Clear';if(code<=2)return'Partly cloudy';if(code===3)return'Overcast';if(code<=49)return'Foggy';if(code<=59)return'Drizzle';if(code<=69)return'Rain';if(code<=79)return'Snow';if(code<=84)return'Rain showers';if(code<=94)return'Thunderstorm';return'Stormy';}
 
-loadInv();update();loadWeather();
+loadInv();loadBW();update();loadWeather();
 </script>
 </body>
 </html>
