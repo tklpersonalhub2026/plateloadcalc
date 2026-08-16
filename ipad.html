@@ -167,7 +167,7 @@ html, body { background:var(--bg); color:var(--text); font-family:-apple-system,
   <div>
     <h1>Plate &amp; Load Calc</h1>
     <p>For Fitbod barbell lifts</p>
-    <p style="font-size:13px;color:#7a8099;margin-top:3px;font-weight:600;">v1.3</p>
+    <p style="font-size:13px;color:#7a8099;margin-top:3px;font-weight:600;">v1.5</p>
     <p class="weather-line" id="weatherLine"><span style="color:#8a94b0;font-style:italic;">Loading weather...</span></p>
   </div>
   <div class="barbell-icon">
@@ -263,7 +263,7 @@ html, body { background:var(--bg); color:var(--text); font-family:-apple-system,
   <div class="inv-header"><div class="inv-title">Body weight</div><div class="inv-sub" id="bwSubLabel">Saved until you change it</div></div>
   <div class="bw-card">
     <div class="bw-row">
-      <input type="number" id="bodyWeight" placeholder="185" min="0" step="1" inputmode="decimal"/>
+      <input type="number" id="bodyWeight" placeholder="175" min="0" step="1" inputmode="decimal"/>
       <span class="lbs-label">lbs</span>
       <div class="bw-steppers"><button id="bwDn">&#8722;</button><button id="bwUp">+</button></div>
     </div>
@@ -359,6 +359,7 @@ var LP_SLED=38;            // starting sled weight, lbs
 var LP_ANGLE=30;           // incline measured from horizontal, degrees
 var LP_SIN=Math.sin(LP_ANGLE*Math.PI/180);   // 0.5 at 30 deg
 var LP_BW_FRAC=0.85;       // share of body weight above the knees (hack squat)
+var BW_DEFAULT=175;        // used when no body weight has been entered yet
 var LOAD_SEL={45:0,35:0,25:0,10:0,5:0,2.5:0,1.25:0};
 var DENOM_TO_LSID={45:'ls45',35:'ls35',25:'ls25',10:'ls10',5:'ls5',2.5:'ls2h',1.25:'ls125'};
 var DENOM_TO_LMID={45:'lmax45',35:'lmax35',25:'lmax25',10:'lmax10',5:'lmax5',2.5:'lmax2h',1.25:'lmax125'};
@@ -464,7 +465,16 @@ function loadBW(){
   var fromUrl=null;
   try{var m=window.location.search.match(/[?&]bw=([0-9.]+)/);if(m)fromUrl=parseFloat(m[1]);}catch(e){}
   if(fromUrl&&fromUrl>0&&fromUrl<1000){setBW(fromUrl,'url');return;}
-  try{var s=localStorage.getItem("plc_bw_ipad");if(s!==null&&s!=='')document.getElementById("bodyWeight").value=s;}catch(e){}
+  var s=null;
+  try{s=localStorage.getItem("plc_bw_ipad");}catch(e){}
+  if(s!==null&&s!==''){
+    document.getElementById("bodyWeight").value=s;
+  } else {
+    /* Nothing saved (fresh install, or cleared by re-adding the home screen
+       icon) — fall back to BW_DEFAULT so hack squat always has a figure. */
+    document.getElementById("bodyWeight").value=BW_DEFAULT;
+    saveBW();
+  }
   renderBWNote();
 }
 function stepBW(delta){var el=document.getElementById("bodyWeight");var v=parseFloat(el.value)||0;el.value=Math.max(0,Math.round((v+delta)*10)/10);saveBW();update();renderBWNote();}
