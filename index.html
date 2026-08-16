@@ -200,7 +200,7 @@ html, body { background:var(--bg); color:var(--text); font-family:-apple-system,
   <div>
     <h1>Plate &amp; Load Calc</h1>
     <p>For Fitbod barbell lifts</p>
-    <p class="header-sub">v1.6</p>
+    <p class="header-sub">v1.7</p>
     <p class="weather-line" id="weatherLine"><span style="color:#8a94b0;font-style:italic;">Loading weather...</span></p>
   </div>
   <div class="barbell-icon">
@@ -394,6 +394,9 @@ var LP_ANGLE=30;           // incline measured from horizontal, degrees
 var LP_SIN=Math.sin(LP_ANGLE*Math.PI/180);   // 0.5 at 30 deg
 var LP_BW_FRAC=0.85;       // share of body weight above the knees (hack squat)
 var BW_DEFAULT=175;        // used when no body weight has been entered yet
+/* Health stores weight in kg, so the lb conversion arrives as e.g.
+   177.79999319... Round anything that reaches us to one decimal.   */
+function bwRound(n){return Math.round(n*10)/10;}
 var LOAD_SEL={45:0,35:0,25:0,10:0,5:0,2.5:0,1.25:0};
 var DENOM_TO_LSID={45:'ls45',35:'ls35',25:'ls25',10:'ls10',5:'ls5',2.5:'ls2h',1.25:'ls125'};
 var DENOM_TO_LMID={45:'lmax45',35:'lmax35',25:'lmax25',10:'lmax10',5:'lmax5',2.5:'lmax2h',1.25:'lmax125'};
@@ -496,11 +499,13 @@ function setBW(v,src){
 function loadBW(){
   var fromUrl=null;
   try{var m=window.location.search.match(/[?&]bw=([0-9.]+)/);if(m)fromUrl=parseFloat(m[1]);}catch(e){}
-  if(fromUrl&&fromUrl>0&&fromUrl<1000){setBW(fromUrl,'url');return;}
+  if(fromUrl&&fromUrl>0&&fromUrl<1000){setBW(bwRound(fromUrl),'url');return;}
   var s=null;
   try{s=localStorage.getItem("plc_bw");}catch(e){}
   if(s!==null&&s!==''){
-    document.getElementById("bodyWeight").value=s;
+    /* a value saved before rounding existed may still be long — tidy it */
+    var n=parseFloat(s);
+    document.getElementById("bodyWeight").value=isNaN(n)?s:bwRound(n);
   } else {
     /* Nothing saved (fresh install, or cleared by re-adding the home screen
        icon) — fall back to BW_DEFAULT so hack squat always has a figure. */
