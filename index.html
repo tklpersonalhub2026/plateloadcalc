@@ -53,17 +53,23 @@ html, body { background:var(--bg); color:var(--text); font-family:-apple-system,
 .cols2 { display:table; width:100%; table-layout:fixed; border-spacing:10px 0; }
 /* Three columns — same spacing as the bar row above */
 .cols3 { display:table; width:100%; table-layout:fixed; border-spacing:10px 0; }
-.cols3 > * { width:33.33%; }
-.cols3 h2 { font-size:11px !important; letter-spacing:-0.2px; }
-.cols3 .bar-name, .cols3 .leg-sub, .cols3 .bar-weight { font-size:8.5px !important; }
+/* must out-specify .bar-col's own width:50% */
+.cols3 > .bar-col, .cols3 > .land-half, .cols3 > .leg-half, .cols3 > .lp-half { width:33.33%; }
+.cols3 h2 { font-size:11px !important; letter-spacing:-0.2px; line-height:1.15; }
+.cols3 .bar-name, .cols3 .leg-sub, .cols3 .bar-weight { font-size:8.5px !important; line-height:1.25; }
 .cols3 .slabel { font-size:8px; }
 .cols3 .sval { font-size:15px; }
 .cols3 .sval.dim { font-size:12px; }
+.cols3 .sval.err { font-size:10px; }
 .cols3 .chip { font-size:10px; padding:3px 6px; }
 .cols3 .plabel { font-size:8px; }
-.cols3 .land-head, .cols3 .leg-head, .cols3 .lp-head { padding:8px 9px; }
-.cols3 .land-stat, .cols3 .leg-stat, .cols3 .lp-stat { padding:6px 9px; }
-.cols3 .land-chips-row, .cols3 .leg-chips-row, .cols3 .lp-chips-row { padding:7px 9px 9px; }
+.cols3 .badge, .cols3 .badge-exceeds { font-size:8px; padding:2px 5px; }
+.cols3 .chip-none, .cols3 .chip-err, .cols3 .bar-only { font-size:9.5px; }
+.cols3 .approx-note { font-size:9px; }
+.cols3 .delta-over, .cols3 .delta-under { font-size:9px; }
+.cols3 .col-head, .cols3 .land-head, .cols3 .leg-head, .cols3 .lp-head { padding:8px 9px; }
+.cols3 .stat, .cols3 .land-stat, .cols3 .leg-stat, .cols3 .lp-stat { padding:6px 9px; }
+.cols3 .plates-area, .cols3 .land-chips-row, .cols3 .leg-chips-row, .cols3 .lp-chips-row { padding:7px 9px 9px; }
 .bar-col { display:table-cell; background:var(--card-bg); border:1.5px solid var(--card-border); border-radius:var(--radius); overflow:hidden; vertical-align:top; width:50%; }
 .bar-col.active { border-color:var(--card-accent); border-width:2px; }
 /* Smith Machine */
@@ -196,7 +202,7 @@ html, body { background:var(--bg); color:var(--text); font-family:-apple-system,
   <div>
     <h1>Plate &amp; Load Calc</h1>
     <p>For Fitbod barbell lifts</p>
-    <p class="header-sub">v1.3</p>
+    <p class="header-sub">v1.4</p>
     <p class="weather-line" id="weatherLine"><span style="color:#8a94b0;font-style:italic;">Loading weather...</span></p>
   </div>
   <div class="barbell-icon">
@@ -230,7 +236,7 @@ html, body { background:var(--bg); color:var(--text); font-family:-apple-system,
     </div>
   </div>
 
-  <div class="cols2">
+  <div class="cols3">
     <div class="bar-col" id="col44">
       <div class="col-head"><h2>Olympic Bar</h2><div class="bar-name">(REP Colorado Bar)</div><div class="bar-weight">44 lbs (20 kg)</div></div>
       <div class="stat"><span class="slabel">Total plates</span><div class="stat-row"><span class="sval dim" id="tp44">&#8212; lbs</span><span id="delta44"></span></div></div>
@@ -243,18 +249,11 @@ html, body { background:var(--bg); color:var(--text); font-family:-apple-system,
       <div class="stat"><span class="slabel">Per side</span><span class="sval dim" id="ps33">&#8212; lbs</span></div>
       <div class="plates-area"><div class="plates-top"><span class="plabel">Plates per side</span><span id="badge33"></span></div><div class="chips" id="chips33"><span class="chip-none">enter weight</span></div><div id="approx33"></div></div>
     </div>
-  </div>
-
-  <div class="smith-col" id="col35">
-    <div class="smith-inner">
-      <div class="smith-head"><h2>Smith Machine</h2><div class="bar-name">(ForceUSA C20)</div><div class="bar-weight">35.5 lbs (16 kg)</div></div>
-      <div class="smith-body">
-        <div class="smith-stats">
-          <div class="smith-stat"><span class="slabel">Total plates</span><div class="stat-row"><span class="sval dim" id="tp35">&#8212; lbs</span><span id="delta35"></span></div></div>
-          <div class="smith-stat"><span class="slabel">Per side</span><span class="sval dim" id="ps35">&#8212; lbs</span></div>
-        </div>
-        <div class="smith-chips"><div class="smith-chips-top"><span class="plabel">Plates per side</span><span id="badge35"></span></div><div class="chips" id="chips35"><span class="chip-none">enter weight above</span></div><div id="approx35"></div></div>
-      </div>
+    <div class="bar-col" id="col35">
+      <div class="col-head"><h2>Smith Machine</h2><div class="bar-name">(ForceUSA C20)</div><div class="bar-weight">35.5 lbs (16 kg)</div></div>
+      <div class="stat"><span class="slabel">Total plates</span><div class="stat-row"><span class="sval dim" id="tp35">&#8212; lbs</span><span id="delta35"></span></div></div>
+      <div class="stat"><span class="slabel">Per side</span><span class="sval dim" id="ps35">&#8212; lbs</span></div>
+      <div class="plates-area"><div class="plates-top"><span class="plabel">Plates per side</span><span id="badge35"></span></div><div class="chips" id="chips35"><span class="chip-none">enter weight</span></div><div id="approx35"></div></div>
     </div>
   </div>
 
@@ -299,7 +298,7 @@ html, body { background:var(--bg); color:var(--text); font-family:-apple-system,
   <div class="inv-header"><div class="inv-title">Body weight</div><div class="inv-sub" id="bwSubLabel">Saved until you change it</div></div>
   <div class="bw-card">
     <div class="bw-row">
-      <input type="number" id="bodyWeight" placeholder="185" min="0" step="1" inputmode="decimal"/>
+      <input type="number" id="bodyWeight" placeholder="175" min="0" step="1" inputmode="decimal"/>
       <span class="lbs-label">lbs</span>
       <div class="bw-steppers"><button id="bwDn">&#8722;</button><button id="bwUp">+</button></div>
     </div>
@@ -335,7 +334,7 @@ html, body { background:var(--bg); color:var(--text); font-family:-apple-system,
 
   <div class="load-section-label"><span class="load-sec-title">Bilateral bars</span><span class="load-sec-sub">plates &#215; 2 sides</span></div>
 
-  <div class="cols2">
+  <div class="cols3">
     <div class="bar-col" id="lcol44">
       <div class="col-head"><h2>Olympic Bar</h2><div class="bar-name">(REP Colorado Bar)</div><div class="bar-weight">44 lbs (20 kg)</div></div>
       <div class="stat"><span class="slabel">Total load</span><div class="stat-row"><span class="sval dim" id="ltotal44">44 lbs</span><span id="lstatus44"></span></div></div>
@@ -348,18 +347,11 @@ html, body { background:var(--bg); color:var(--text); font-family:-apple-system,
       <div class="stat"><span class="slabel">Per side</span><span class="sval dim" id="lps33">bar only</span></div>
       <div class="plates-area"><div class="plates-top"><span class="plabel">Plates per side</span></div><div class="chips" id="lchips33"><span class="chip-none">none selected</span></div></div>
     </div>
-  </div>
-
-  <div class="smith-col" id="lcol35">
-    <div class="smith-inner">
-      <div class="smith-head"><h2>Smith Machine</h2><div class="bar-name">(ForceUSA C20)</div><div class="bar-weight">35.5 lbs (16 kg)</div></div>
-      <div class="smith-body">
-        <div class="smith-stats">
-          <div class="smith-stat"><span class="slabel">Total load</span><div class="stat-row"><span class="sval dim" id="ltotal35">35.5 lbs</span><span id="lstatus35"></span></div></div>
-          <div class="smith-stat"><span class="slabel">Per side</span><span class="sval dim" id="lps35">bar only</span></div>
-        </div>
-        <div class="smith-chips"><div class="smith-chips-top"><span class="plabel">Plates per side</span></div><div class="chips" id="lchips35"><span class="chip-none">none selected</span></div></div>
-      </div>
+    <div class="bar-col" id="lcol35">
+      <div class="col-head"><h2>Smith Machine</h2><div class="bar-name">(ForceUSA C20)</div><div class="bar-weight">35.5 lbs (16 kg)</div></div>
+      <div class="stat"><span class="slabel">Total load</span><div class="stat-row"><span class="sval dim" id="ltotal35">35.5 lbs</span><span id="lstatus35"></span></div></div>
+      <div class="stat"><span class="slabel">Per side</span><span class="sval dim" id="lps35">bar only</span></div>
+      <div class="plates-area"><div class="plates-top"><span class="plabel">Plates per side</span></div><div class="chips" id="lchips35"><span class="chip-none">none selected</span></div></div>
     </div>
   </div>
 
@@ -406,6 +398,7 @@ var LP_SLED=38;            // starting sled weight, lbs
 var LP_ANGLE=30;           // incline measured from horizontal, degrees
 var LP_SIN=Math.sin(LP_ANGLE*Math.PI/180);   // 0.5 at 30 deg
 var LP_BW_FRAC=0.85;       // share of body weight above the knees (hack squat)
+var BW_DEFAULT=175;        // used when no body weight has been entered yet
 var LOAD_SEL={45:0,35:0,25:0,10:0,5:0,2.5:0,1.25:0};
 var DENOM_TO_LSID={45:'ls45',35:'ls35',25:'ls25',10:'ls10',5:'ls5',2.5:'ls2h',1.25:'ls125'};
 var DENOM_TO_LMID={45:'lmax45',35:'lmax35',25:'lmax25',10:'lmax10',5:'lmax5',2.5:'lmax2h',1.25:'lmax125'};
@@ -509,7 +502,16 @@ function loadBW(){
   var fromUrl=null;
   try{var m=window.location.search.match(/[?&]bw=([0-9.]+)/);if(m)fromUrl=parseFloat(m[1]);}catch(e){}
   if(fromUrl&&fromUrl>0&&fromUrl<1000){setBW(fromUrl,'url');return;}
-  try{var s=localStorage.getItem("plc_bw");if(s!==null&&s!=='')document.getElementById("bodyWeight").value=s;}catch(e){}
+  var s=null;
+  try{s=localStorage.getItem("plc_bw");}catch(e){}
+  if(s!==null&&s!==''){
+    document.getElementById("bodyWeight").value=s;
+  } else {
+    /* Nothing saved (fresh install, or cleared by re-adding the home screen
+       icon) — fall back to BW_DEFAULT so hack squat always has a figure. */
+    document.getElementById("bodyWeight").value=BW_DEFAULT;
+    saveBW();
+  }
   renderBWNote();
 }
 function stepBW(delta){var el=document.getElementById("bodyWeight");var v=parseFloat(el.value)||0;el.value=Math.max(0,Math.round((v+delta)*10)/10);saveBW();update();renderBWNote();}
