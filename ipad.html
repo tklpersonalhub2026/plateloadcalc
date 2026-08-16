@@ -106,16 +106,11 @@ html, body { background:var(--bg); color:var(--text); font-family:-apple-system,
 /* Leg Press / Hack Squat */
 .lp-half { display:table-cell; background:var(--lp-bg); border:2px solid var(--lp-border); border-radius:18px; overflow:hidden; vertical-align:top; }
 .lp-half.active { border-color:var(--lp-accent); border-width:3px; }
-.lp-full { background:var(--lp-bg); border:2px solid var(--lp-border); border-radius:18px; overflow:hidden; }
-.lp-full.active { border-color:var(--lp-accent); border-width:3px; }
 .lp-head { background:var(--lp-header); padding:14px 16px; border-bottom:1.5px solid var(--lp-border); }
 .lp-head h2 { font-size:20px; font-weight:800; color:var(--card-text); }
 .lp-head .bar-name { font-size:13px; color:var(--card-muted); margin-top:3px; font-style:italic; }
 .lp-head .bar-weight { font-size:13px; color:var(--card-muted); margin-top:2px; }
 .lp-stat { padding:12px 16px; border-bottom:1px solid #c6e6db; }
-.lp-stats-row { display:flex; border-bottom:1px solid #c6e6db; }
-.lp-stats-row > div { flex:1; padding:12px 16px; border-right:1px solid #c6e6db; }
-.lp-stats-row > div:last-child { border-right:none; }
 .lp-chips-row { padding:12px 16px 16px; background:var(--lp-bg); }
 .lp-chips-top { display:flex; align-items:center; gap:8px; margin-bottom:10px; }
 .sval.lp { color:var(--lp-accent); }
@@ -167,7 +162,7 @@ html, body { background:var(--bg); color:var(--text); font-family:-apple-system,
   <div>
     <h1>Plate &amp; Load Calc</h1>
     <p>For Fitbod barbell lifts</p>
-    <p style="font-size:13px;color:#7a8099;margin-top:3px;font-weight:600;">v1.5</p>
+    <p style="font-size:13px;color:#7a8099;margin-top:3px;font-weight:600;">v1.6</p>
     <p class="weather-line" id="weatherLine"><span style="color:#8a94b0;font-style:italic;">Loading weather...</span></p>
   </div>
   <div class="barbell-icon">
@@ -235,7 +230,7 @@ html, body { background:var(--bg); color:var(--text); font-family:-apple-system,
       <div class="leg-chips-row"><div class="leg-chips-top"><span class="plabel">Plates on horn</span></div><div class="chips" id="legChips"><span class="chip-none">enter weight above</span></div><div id="legApprox"></div></div>
     </div>
     <div class="lp-half" id="lpSection">
-      <div class="lp-head"><h2>Leg Press</h2><div class="bar-name">(Force USA Compact &#8212; hack squat / calf)</div><div class="bar-weight">38 lb sled &#183; 30&#176; incline &#183; two horns</div></div>
+      <div class="lp-head"><h2>Leg Press</h2><div class="bar-name">(ForceUSA Compact Leg Press/Hack Squat)</div><div class="bar-weight">38 lb sled &#183; 30&#176; &#183; two horns</div></div>
       <div class="lp-stat" style="display:flex;align-items:baseline;justify-content:space-between;"><div><span class="slabel">Total plates</span><span class="sval dim" id="tpLP">&#8212; lbs</span></div><span id="deltaLP"></span></div>
       <div class="lp-stat"><span class="slabel">Per horn</span><span class="sval dim" id="psLP">&#8212; lbs</span></div>
       <div class="lp-chips-row"><div class="lp-chips-top"><span class="plabel">Plates per horn</span><span id="lpBadge"></span></div><div class="chips" id="lpChips"><span class="chip-none">enter weight above</span></div><div id="lpApprox"></div><div class="eff-note" id="lpEff"></div></div>
@@ -317,19 +312,10 @@ html, body { background:var(--bg); color:var(--text); font-family:-apple-system,
     </div>
   </div>
 
-  <div class="lp-full" id="lcolLP">
-    <div class="lp-head"><h2>Leg Press / Hack Squat</h2><div class="bar-name">(Force USA Compact &#8212; two horns)</div><div class="bar-weight">38 lb sled &#183; 30&#176; incline</div></div>
-    <div class="lp-stats-row">
-      <div><span class="slabel">Plates + sled</span><div class="stat-row"><span class="sval dim" id="ltotalLP">38 lbs</span><span id="lstatusLP"></span></div></div>
-      <div><span class="slabel">Per horn</span><span class="sval dim" id="lpsLP">sled only</span></div>
-    </div>
-    <div class="lp-chips-row"><div class="lp-chips-top"><span class="plabel">Plates per horn</span></div><div class="chips" id="lchipsLP"><span class="chip-none">none selected</span></div><div class="eff-note" id="lEffLP"></div></div>
-  </div>
-
   <div class="divider"></div>
-  <div class="load-section-label"><span class="load-sec-title">Single-end equipment</span><span class="load-sec-sub">total plates on one end</span></div>
+  <div class="load-section-label"><span class="load-sec-title">Machines &amp; attachments</span><span class="load-sec-sub">landmine &amp; leg developer: one end &#183; leg press: both horns</span></div>
 
-  <div class="cols2">
+  <div class="cols">
     <div class="land-half" id="llandSection">
       <div class="land-head"><h2>Landmine</h2><div class="bar-name">(REP Colorado Bar)</div><div class="bar-weight">~22 lbs effective</div></div>
       <div class="land-stat"><span class="slabel">Effective load</span><span class="sval dim" id="ltotalLand">22 lbs</span></div>
@@ -339,6 +325,12 @@ html, body { background:var(--bg); color:var(--text); font-family:-apple-system,
       <div class="leg-head"><div class="leg-head-text"><h2>Leg Developer</h2><div class="leg-sub">Freak Athlete ABX &#8212; single horn</div></div></div>
       <div class="leg-stat"><span class="slabel">Total load</span><span class="sval dim" id="ltotalLeg">0 lbs</span></div>
       <div class="leg-chips-row"><div class="leg-chips-top"><span class="plabel">Plates on horn</span></div><div class="chips" id="lchipsLeg"><span class="chip-none">none selected</span></div></div>
+    </div>
+    <div class="lp-half" id="lcolLP">
+      <div class="lp-head"><h2>Leg Press</h2><div class="bar-name">(ForceUSA Compact Leg Press/Hack Squat)</div><div class="bar-weight">38 lb sled &#183; 30&#176; &#183; two horns</div></div>
+      <div class="lp-stat"><span class="slabel">Plates + sled</span><div class="stat-row"><span class="sval dim" id="ltotalLP">38 lbs</span><span id="lstatusLP"></span></div></div>
+      <div class="lp-stat"><span class="slabel">Per horn</span><span class="sval dim" id="lpsLP">sled only</span></div>
+      <div class="lp-chips-row"><div class="lp-chips-top"><span class="plabel">Plates per horn</span></div><div class="chips" id="lchipsLP"><span class="chip-none">none selected</span></div><div class="eff-note" id="lEffLP"></div></div>
     </div>
   </div>
 
@@ -572,21 +564,21 @@ function updateLoad(){
       lpChipsEl=document.getElementById('lchipsLP'),lpEffEl=document.getElementById('lEffLP');
   if(lpColEl){
     if(!hasPlates){
-      lpColEl.className='lp-full';
+      lpColEl.className='lp-half';
       lpTotEl.className='sval dim';lpTotEl.textContent=fmt(LP_SLED)+' lbs';
       lpPsEl.className='sval dim';lpPsEl.textContent='sled only';
       if(lpStatEl)lpStatEl.innerHTML='';
       lpChipsEl.innerHTML='<span class="chip-none">none selected</span>';
       lpEffEl.innerHTML=lpEffHtml(0);
     } else if(exceeds){
-      lpColEl.className='lp-full active';
+      lpColEl.className='lp-half active';
       lpTotEl.className='sval dim';lpTotEl.textContent='— lbs';
       lpPsEl.className='sval dim';lpPsEl.textContent='—';
       if(lpStatEl)lpStatEl.innerHTML='<span class="badge-exceeds">Exceeds Inventory</span>';
       lpChipsEl.innerHTML='<span class="chip-err">Cannot load — insufficient plates</span>';
       lpEffEl.innerHTML='';
     } else {
-      lpColEl.className='lp-full active';
+      lpColEl.className='lp-half active';
       lpTotEl.className='sval lp';lpTotEl.textContent=fmt(plateWt*2+LP_SLED)+' lbs';
       lpPsEl.className='sval lp';lpPsEl.textContent=fmt(plateWt)+' lbs/horn';
       if(lpStatEl)lpStatEl.innerHTML='';
