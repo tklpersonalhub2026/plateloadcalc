@@ -200,7 +200,7 @@ html, body { background:var(--bg); color:var(--text); font-family:-apple-system,
   <div>
     <h1>Plate &amp; Load Calc</h1>
     <p>For Fitbod barbell lifts</p>
-    <p class="header-sub">v1.7</p>
+    <p class="header-sub">v1.8</p>
     <p class="weather-line" id="weatherLine"><span style="color:#8a94b0;font-style:italic;">Loading weather...</span></p>
   </div>
   <div class="barbell-icon">
@@ -386,13 +386,22 @@ var INV_IDS=["i45","i35","i25","i10","i5","i2h","i125"];
 var INV_VALS=[45,35,25,10,5,2.5,1.25];
 var BARS=[{suffix:"44",weight:44,exact:44.092},{suffix:"33",weight:33,exact:33.069},{suffix:"35",weight:35.5,exact:35.274}];
 var LAND_EFF=22;
-/* ── Leg Press / Hack Squat (Force USA Compact) ──
-   Basis: Fitbod's target = PLATE weight on the horns (two horns, symmetric).
-   Sled + incline are used only to report true effective resistance.       */
+/* ── Leg Press / Hack Squat / Calf (ForceUSA Compact) ──
+   Basis (Tom, v1.8): Fitbod's target is the EFFECTIVE resistance he feels.
+   The sled, the 30-degree incline and his body all contribute, so we solve
+   backwards for the plates needed:
+
+       effective = (plates + sled + bodyShare) x sin(30)
+       plates    = target / sin(30) - sled - bodyShare
+                 = 2 x target - 38 - 0.85 x bodyweight
+
+   Body weight counts in ALL THREE modes (leg press, hack squat, calf) --
+   Tom's explicit decision: on this machine his body travels with the sled in
+   every one of them. Do not change without asking him.                    */
 var LP_SLED=38;            // starting sled weight, lbs
 var LP_ANGLE=30;           // incline measured from horizontal, degrees
 var LP_SIN=Math.sin(LP_ANGLE*Math.PI/180);   // 0.5 at 30 deg
-var LP_BW_FRAC=0.85;       // share of body weight above the knees (hack squat)
+var LP_BW_FRAC=0.85;       // share of body weight that travels with the sled
 var BW_DEFAULT=175;        // used when no body weight has been entered yet
 /* Health stores weight in kg, so the lb conversion arrives as e.g.
    177.79999319... Round anything that reaches us to one decimal.   */
@@ -447,32 +456,60 @@ function updateLandmine(tv){
   approxEl.innerHTML=(!res.exact&&res.plates.length)?'<div class="approx-note">Closest: '+fmt(actual)+' lbs</div>':"";
 }
 function getBW(){return parseFloat(document.getElementById("bodyWeight").value)||0;}
-/* Effective resistance the legs actually push, along the 30-deg sled path. */
-function lpEffective(plateWt){return (plateWt+LP_SLED)*LP_SIN;}
-function lpHackEffective(plateWt,bw){return lpEffective(plateWt)+(bw*LP_BW_FRAC*LP_SIN);}
-function lpEffHtml(plateWt){
-  var bw=getBW(),press=lpEffective(plateWt);
-  var h='Leg press eff. <span>'+press.toFixed(1)+' lbs</span>';
-  if(bw>0)h+='<br>Hack squat eff. <span>'+lpHackEffective(plateWt,bw).toFixed(1)+' lbs</span>';
-  else h+='<br><span>add body weight below for hack squat</span>';
-  return h;
+/* Effective resistance felt, for a given total plate weight. */
+function lpEffective(plateWt,bw){
+  return (plateWt + LP_SLED + (bw||0)*LP_BW_FRAC) * LP_SIN;
 }
+/* Plates needed (TOTAL, both horns) to feel `target`. May come out negative,
+   which means the sled and body alone already exceed the target.          */
+function lpPlatesNeeded(target,bw){
+  return target/LP_SIN - LP_SLED - (bw||0)*LP_BW_FRAC;
+}
+/* The arithmetic, shown so Tom can check it at the machine. */
+function lpEffHtml(plateWt,bw){
+  var body=(bw||0)*LP_BW_FRAC;
+  return 'Effective load <span>'+lpEffective(plateWt,bw).toFixed(1)+' lbs</span>'
+       + '<br><span>('+fmt(plateWt)+' plates + '+LP_SLED+' sled + '
+       + body.toFixed(1)+' body) &#215; sin&#8201;30&#176;</span>';
+}
+
 function updateLegPress(tv){
   var sec=document.getElementById("lpSection"),tpEl=document.getElementById("tpLP"),psEl=document.getElementById("psLP"),
       badgeEl=document.getElementById("lpBadge"),chipsEl=document.getElementById("lpChips"),
       approxEl=document.getElementById("lpApprox"),effEl=document.getElementById("lpEff"),deltaEl=document.getElementById("deltaLP");
-  if(!tv||tv<=0){sec.className="lp-half";tpEl.className="sval dim";tpEl.textContent="— lbs";psEl.className="sval dim";psEl.textContent="— lbs";badgeEl.innerHTML="";chipsEl.innerHTML='<span class="chip-none">enter weight above</span>';approxEl.innerHTML="";effEl.innerHTML="";if(deltaEl)deltaEl.innerHTML="";return;}
+  var bw=getBW();
+  function blank(){tpEl.className="sval dim";tpEl.textContent="\u2014 lbs";psEl.className="sval dim";psEl.textContent="\u2014 lbs";badgeEl.innerHTML="";approxEl.innerHTML="";if(deltaEl)deltaEl.innerHTML="";}
+  if(!tv||tv<=0){sec.className="lp-half";blank();chipsEl.innerHTML='<span class="chip-none">enter weight above</span>';effEl.innerHTML="";return;}
   sec.className="lp-half active";
-  var tp=Math.round(tv/2.5)*2.5,ph=tp/2;
+
+  var need=lpPlatesNeeded(tv,bw);
+
+  /* Sled + body alone already meet or exceed the target. */
+  if(need<2.5){
+    blank();
+    tpEl.className="sval";tpEl.textContent="0 lbs";
+    psEl.className="sval lp";psEl.textContent="0 lbs";
+    chipsEl.innerHTML='<span class="bar-only">No plates \u2014 sled + body is enough</span>';
+    effEl.innerHTML=lpEffHtml(0,bw);
+    return;
+  }
+
+  var tp=Math.round(need/2.5)*2.5, ph=tp/2;
   tpEl.className="sval";tpEl.textContent=fmt(tp)+" lbs";
   psEl.className="sval lp";psEl.textContent=fmt(ph)+" lbs";
-  if(deltaEl){var dp=Math.round((tp-tv)*100)/100;if(dp===0)deltaEl.innerHTML="";else if(dp>0)deltaEl.innerHTML='<span class="delta-over">+'+dp.toFixed(2)+' lbs</span>';else deltaEl.innerHTML='<span class="delta-under">'+dp.toFixed(2)+' lbs</span>';}
-  if(ph===0){badgeEl.innerHTML="";chipsEl.innerHTML='<span class="bar-only">Sled only</span>';approxEl.innerHTML="";effEl.innerHTML=lpEffHtml(0);return;}
+
   var inv=getBarInv(),res=findPlates(ph,inv),aPH=res.rounded-res.leftover,aT=aPH*2;
-  badgeEl.innerHTML=res.exact?'<span class="badge badge-exact">EXACT</span>':'<span class="badge badge-approx">~'+fmt(aT)+' lbs</span>';
+  var eff=lpEffective(aT,bw), d=Math.round((eff-tv)*100)/100;
+  if(deltaEl){
+    if(d===0)deltaEl.innerHTML="";
+    else if(d>0)deltaEl.innerHTML='<span class="delta-over">+'+d.toFixed(2)+' lbs</span>';
+    else deltaEl.innerHTML='<span class="delta-under">'+d.toFixed(2)+' lbs</span>';
+  }
+  badgeEl.innerHTML=(res.exact&&Math.abs(d)<0.05)?'<span class="badge badge-exact">EXACT</span>'
+                    :'<span class="badge badge-approx">~'+eff.toFixed(1)+' lbs</span>';
   chipsEl.innerHTML=res.plates.length?buildChips(res.plates):'<span class="chip-err">No solution</span>';
   approxEl.innerHTML=(!res.exact&&res.plates.length)?'<div class="approx-note">Closest: '+fmt(aPH)+' lbs/horn</div>':"";
-  effEl.innerHTML=lpEffHtml(aT);
+  effEl.innerHTML=lpEffHtml(aT,bw);
 }
 function update(){var val=parseFloat(document.getElementById("totalWeight").value)||0;for(var i=0;i<BARS.length;i++)updateCol(BARS[i],val);updateLeg(val);updateLandmine(val);updateLegPress(val);}
 
@@ -614,7 +651,7 @@ function updateLoad(){
       lpPsEl.className='sval dim';lpPsEl.textContent='sled only';
       if(lpStatEl)lpStatEl.innerHTML='';
       lpChipsEl.innerHTML='<span class="chip-none">none selected</span>';
-      lpEffEl.innerHTML=lpEffHtml(0);
+      lpEffEl.innerHTML=lpEffHtml(0,getBW());
     } else if(exceeds){
       lpColEl.className='lp-half active';
       lpTotEl.className='sval dim';lpTotEl.textContent='— lbs';
@@ -628,7 +665,7 @@ function updateLoad(){
       lpPsEl.className='sval lp';lpPsEl.textContent=fmt(plateWt)+' lbs/horn';
       if(lpStatEl)lpStatEl.innerHTML='';
       lpChipsEl.innerHTML=chipsHtml||'<span class="chip-none">none selected</span>';
-      lpEffEl.innerHTML=lpEffHtml(plateWt*2);
+      lpEffEl.innerHTML=lpEffHtml(plateWt*2,getBW());
     }
   }
 
