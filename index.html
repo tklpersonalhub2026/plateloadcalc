@@ -200,7 +200,7 @@ html, body { background:var(--bg); color:var(--text); font-family:-apple-system,
   <div>
     <h1>Plate &amp; Load Calc</h1>
     <p>For Fitbod barbell lifts</p>
-    <p class="header-sub">v1.8</p>
+    <p class="header-sub">v1.9</p>
     <p class="weather-line" id="weatherLine"><span style="color:#8a94b0;font-style:italic;">Loading weather...</span></p>
   </div>
   <div class="barbell-icon">
@@ -401,7 +401,9 @@ var LAND_EFF=22;
 var LP_SLED=38;            // starting sled weight, lbs
 var LP_ANGLE=30;           // incline measured from horizontal, degrees
 var LP_SIN=Math.sin(LP_ANGLE*Math.PI/180);   // 0.5 at 30 deg
-var LP_BW_FRAC=0.85;       // share of body weight that travels with the sled
+var LP_BW_FRAC=0.88;       // share of body weight that travels with the sled
+                           // (feet + lower legs stay on the fixed footplate:
+                           //  2 feet ~2.8% + 2 shanks ~9% = ~12% does NOT ride)
 var BW_DEFAULT=175;        // used when no body weight has been entered yet
 /* Health stores weight in kg, so the lb conversion arrives as e.g.
    177.79999319... Round anything that reaches us to one decimal.   */
