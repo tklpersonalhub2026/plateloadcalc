@@ -171,51 +171,60 @@ html, body { background:var(--bg); color:var(--text); font-family:-apple-system,
 .load-section-label { display:flex; align-items:baseline; gap:8px; }
 .load-sec-title { font-size:13px; font-weight:700; color:var(--text); }
 .load-sec-sub { font-size:11px; color:var(--muted); }
-/* The Load Calculator's second row gained the round Clear button, so it
-   needs one more column than the Plate Calculator's inventory row. */
-#page-load .inv-grid-2 { grid-template-columns:repeat(3,1fr); max-width:100%; }
-/* Round red Clear-load button — sits beside the 5 lb plate in the Load
-   Calculator so a stray upward swipe can't hit it. It used to be a
-   full-width bar, which Tom kept pressing by accident on the iPad. */
-.clearwrap{display:flex; flex-direction:column; align-items:center; justify-content:center;}
+/* Clear-load button — a raised 3-D dome sitting OUTSIDE the plate grid,
+   to the left of the second row. Deliberately unlike the flat plate circles
+   so it reads as a control, not a weight. It used to be a full-width bar
+   that Tom kept hitting with a stray swipe. */
+.loadrow2{display:flex; align-items:center; justify-content:center; gap:14px; margin-top:8px;}
+.loadrow2 > .inv-grid-2{margin-top:0;}
 button.clear-round{
-  width:60px; height:60px; border-radius:50%;
-  background:#c62828; border:3px solid #ef9a9a; color:#fff;
-  font-size:12px; font-weight:800; line-height:1.05; letter-spacing:-0.2px;
+  width:62px; height:62px; border-radius:50%; flex-shrink:0; border:none; padding:0;
+  background:radial-gradient(circle at 34% 27%, #ff7a6b 0%, #e53935 44%, #a81919 100%);
+  color:#fff; font-family:inherit; font-size:11px; font-weight:800; line-height:1.1;
+  letter-spacing:0.3px; text-shadow:0 1px 2px rgba(0,0,0,0.45);
   display:flex; flex-direction:column; align-items:center; justify-content:center;
   cursor:pointer; touch-action:manipulation; -webkit-user-select:none; user-select:none;
-  box-shadow:0 2px 6px rgba(0,0,0,0.35);
+  box-shadow:0 4px 9px rgba(0,0,0,0.55),
+             inset 0 3px 6px rgba(255,255,255,0.42),
+             inset 0 -3px 6px rgba(0,0,0,0.38);
+  transition:transform 0.06s, box-shadow 0.06s;
 }
-button.clear-round:active{background:#8e1f1f;}
-button.clear-round small{display:block; font-size:11px; font-weight:700; opacity:0.9;}
+button.clear-round small{display:block; font-size:10px; font-weight:700; opacity:0.92;}
+button.clear-round:active{
+  transform:translateY(4px);
+  box-shadow:0 1px 3px rgba(0,0,0,0.5), inset 0 3px 8px rgba(0,0,0,0.45);
+}
 /* ═══════════ RACK SETTINGS (tab 3) ═══════════ */
-/* Read while standing over the iPad in the gym: large type, roomy rows. */
-.rack-head{display:flex; align-items:baseline; gap:16px; flex-wrap:wrap;}
-.rack-note{font-size:12px; color:var(--muted); margin-top:3px; line-height:1.5;}
-.rack-cols{display:flex; gap:10px; padding:0 12px 8px;}
-.rack-cols span{font-size:10px; font-weight:800; text-transform:uppercase;
-  letter-spacing:0.8px; color:var(--muted); text-align:center; width:62px; flex-shrink:0;}
+/* Readable from standing height, but tight enough that ~10 exercises fit on
+   one iPad screen without scrolling. Tom asked for both — don't inflate. */
+.rack-head{display:flex; align-items:baseline; gap:12px; flex-wrap:wrap;}
+.rack-head .inv-title{font-size:17px;}
+.rack-note{font-size:11px; color:var(--muted); margin-top:2px; line-height:1.4;}
+.rack-cols{display:flex; gap:8px; padding:0 10px 4px;}
+.rack-cols span{font-size:9px; font-weight:800; text-transform:uppercase;
+  letter-spacing:0.7px; color:var(--muted); text-align:center; width:56px; flex-shrink:0;}
 .rack-cols .spacer{flex:1; width:auto; text-align:left;}
-.rack-row{display:flex; align-items:center; gap:10px; background:var(--surface);
-  border:1px solid var(--border2); border-radius:12px;
-  padding:13px 12px; margin-bottom:9px;}
+.rack-row{display:flex; align-items:center; gap:8px; background:var(--surface);
+  border:1px solid var(--border2); border-radius:10px;
+  padding:7px 10px; margin-bottom:5px;}
 .rack-name{flex:1; min-width:0; background:transparent; border:none; outline:none;
-  color:var(--text); font-family:inherit; font-size:16px; font-weight:700;
-  padding:3px 0; letter-spacing:-0.2px;}
+  color:var(--text); font-family:inherit; font-size:14px; font-weight:700;
+  padding:2px 0; letter-spacing:-0.2px;}
 .rack-name:focus{border-bottom:2px solid var(--card-accent);}
-.rack-val{width:62px; flex-shrink:0; background:var(--surface2); border:2px solid var(--border2);
-  border-radius:9px; color:var(--text); font-family:inherit; font-size:21px; font-weight:800;
-  text-align:center; padding:9px 2px; outline:none; -webkit-appearance:textfield; appearance:textfield;}
+.rack-val{width:56px; flex-shrink:0; background:var(--surface2); border:1.5px solid var(--border2);
+  border-radius:8px; color:var(--text); font-family:inherit; font-size:18px; font-weight:800;
+  text-align:center; padding:5px 2px; outline:none; -webkit-appearance:textfield; appearance:textfield;}
 .rack-val:focus{border-color:var(--card-accent); background:#2a3050;}
 .rack-val::placeholder{color:#5a6280; font-weight:700;}
-.rack-del{width:30px; height:30px; flex-shrink:0; border-radius:50%; background:transparent;
-  border:1px solid var(--border2); color:var(--muted); font-size:17px; font-weight:700; line-height:1;
+.rack-del{width:26px; height:26px; flex-shrink:0; border-radius:50%; background:transparent;
+  border:1px solid var(--border2); color:var(--muted); font-size:15px; font-weight:700; line-height:1;
   display:flex; align-items:center; justify-content:center; cursor:pointer; touch-action:manipulation;}
 .rack-del:active{background:#5a1f1f; border-color:#c62828; color:#fff;}
-.rack-add{width:100%; padding:14px; background:transparent; border:2px dashed var(--border2);
-  border-radius:12px; color:var(--muted); font-family:inherit; font-size:14px; font-weight:700;
-  cursor:pointer; touch-action:manipulation; margin-top:9px;}
+.rack-add{width:100%; padding:10px; background:transparent; border:1.5px dashed var(--border2);
+  border-radius:10px; color:var(--muted); font-family:inherit; font-size:13px; font-weight:700;
+  cursor:pointer; touch-action:manipulation; margin-top:5px;}
 .rack-add:active{background:var(--surface2); color:var(--text);}
+#page-rack{gap:5px;}
 /* Buttons */
 .clear-btn { width:100%; padding:14px; background:transparent; border:1px solid var(--border2); border-radius:var(--radius-sm); color:var(--muted); font-size:14px; font-weight:500; cursor:pointer; touch-action:manipulation; }
 .clear-btn:active { background:var(--surface2); color:var(--text); }
@@ -233,7 +242,7 @@ button.clear-round small{display:block; font-size:11px; font-weight:700; opacity
   <div>
     <h1>Plate &amp; Load Calc</h1>
     <p>For Fitbod barbell lifts</p>
-    <p class="header-sub">v2.0</p>
+    <p class="header-sub">v2.1</p>
     <p class="weather-line" id="weatherLine"><span style="color:#8a94b0;font-style:italic;">Loading weather...</span></p>
   </div>
   <div class="barbell-icon">
@@ -253,7 +262,7 @@ button.clear-round small{display:block; font-size:11px; font-weight:700; opacity
 <div class="tab-bar">
   <button class="tab-btn active" id="tab-calc" ontouchstart="event.preventDefault()" ontouchend="switchTab('calc')" onclick="switchTab('calc')">Plate Calculator</button>
   <button class="tab-btn" id="tab-load" ontouchstart="event.preventDefault()" ontouchend="switchTab('load')" onclick="switchTab('load')">Load Calculator</button>
-  <button class="tab-btn" id="tab-rack" ontouchstart="event.preventDefault()" ontouchend="switchTab('rack')" onclick="switchTab('rack')">Rack</button>
+  <button class="tab-btn" id="tab-rack" ontouchstart="event.preventDefault()" ontouchend="switchTab('rack')" onclick="switchTab('rack')">Rack Settings</button>
 </div>
 
 <!-- ═══════════════════════════ PLATE CALCULATOR PAGE ═══════════════════════════ -->
@@ -339,10 +348,12 @@ button.clear-round small{display:block; font-size:11px; font-weight:700; opacity
     <div class="inv-item"><div class="pcircle" style="background:#f9d000;color:#111;">35</div><label>35 lb</label><div class="inv-stepper"><button ontouchstart="event.preventDefault()" ontouchend="stepLoad(35,-1)" onclick="stepLoad(35,-1)">&#8722;</button><span class="load-count" id="ls35">0</span><button ontouchstart="event.preventDefault()" ontouchend="stepLoad(35,1)" onclick="stepLoad(35,1)">+</button></div><div class="load-max" id="lmax35">max: 0</div></div>
     <div class="inv-item"><div class="pcircle" style="background:#1b8c2e;color:#fff;">25</div><label>25 lb</label><div class="inv-stepper"><button ontouchstart="event.preventDefault()" ontouchend="stepLoad(25,-1)" onclick="stepLoad(25,-1)">&#8722;</button><span class="load-count" id="ls25">0</span><button ontouchstart="event.preventDefault()" ontouchend="stepLoad(25,1)" onclick="stepLoad(25,1)">+</button></div><div class="load-max" id="lmax25">max: 0</div></div>
   </div>
-  <div class="inv-grid-2">
+  <div class="loadrow2">
+    <button class="clear-round" ontouchstart="event.preventDefault()" ontouchend="clearLoad()" onclick="clearLoad()" aria-label="Clear load">CLEAR<small>load</small></button>
+    <div class="inv-grid-2">
     <div class="inv-item"><div class="pcircle" style="background:#212121;color:#fff;">10</div><label>10 lb</label><div class="inv-stepper"><button ontouchstart="event.preventDefault()" ontouchend="stepLoad(10,-1)" onclick="stepLoad(10,-1)">&#8722;</button><span class="load-count" id="ls10">0</span><button ontouchstart="event.preventDefault()" ontouchend="stepLoad(10,1)" onclick="stepLoad(10,1)">+</button></div><div class="load-max" id="lmax10">max: 0</div></div>
     <div class="inv-item"><div class="pcircle" style="background:#7dd3fc;color:#0d2a3a;border:3px solid #fff;">5</div><label>5 lb</label><div class="inv-stepper"><button ontouchstart="event.preventDefault()" ontouchend="stepLoad(5,-1)" onclick="stepLoad(5,-1)">&#8722;</button><span class="load-count" id="ls5">0</span><button ontouchstart="event.preventDefault()" ontouchend="stepLoad(5,1)" onclick="stepLoad(5,1)">+</button></div><div class="load-max" id="lmax5">max: 0</div></div>
-    <div class="inv-item clearwrap"><button class="clear-round" ontouchstart="event.preventDefault()" ontouchend="clearLoad()" onclick="clearLoad()" aria-label="Clear load">CLEAR<small>load</small></button></div>
+    </div>
   </div>
   <div class="inv-grid-3">
     <div class="inv-item"><div class="pcircle" style="background:#86efac;color:#0d2a1a;border:3px solid #fff;">2.5</div><label>2.5 lb</label><div class="inv-stepper"><button ontouchstart="event.preventDefault()" ontouchend="stepLoad(2.5,-1)" onclick="stepLoad(2.5,-1)">&#8722;</button><span class="load-count" id="ls2h">0</span><button ontouchstart="event.preventDefault()" ontouchend="stepLoad(2.5,1)" onclick="stepLoad(2.5,1)">+</button></div><div class="load-max" id="lmax2h">max: 0</div></div>
@@ -412,7 +423,7 @@ button.clear-round small{display:block; font-size:11px; font-weight:700; opacity
     <span class="spacer">Exercise</span>
     <span>J-Hook</span>
     <span>Spotter</span>
-    <span style="width:30px;"></span>
+    <span style="width:26px;"></span>
   </div>
 
   <div id="rackRows"></div>
