@@ -175,8 +175,13 @@ html, body { background:var(--bg); color:var(--text); font-family:-apple-system,
    to the left of the second row. Deliberately unlike the flat plate circles
    so it reads as a control, not a weight. It used to be a full-width bar
    that Tom kept hitting with a stray swipe. */
-.loadrow2{display:flex; align-items:center; justify-content:center; gap:14px; margin-top:8px;}
+/* The plate grid stays centred exactly as it always was; the Clear button is
+   taken OUT of the layout flow (absolute) and parked in the left gutter, so
+   it cannot shift the row off-centre. Tom asked for the original centring. */
+.loadrow2{position:relative; display:flex; justify-content:center; align-items:center;}
 .loadrow2 > .inv-grid-2{margin-top:0;}
+.loadrow2 > button.clear-round{position:absolute; left:0; top:50%; transform:translateY(-50%);}
+.loadrow2 > button.clear-round:active{transform:translateY(-50%) translateY(4px);}
 button.clear-round{
   width:62px; height:62px; border-radius:50%; flex-shrink:0; border:none; padding:0;
   background:radial-gradient(circle at 34% 27%, #ff7a6b 0%, #e53935 44%, #a81919 100%);
@@ -191,7 +196,6 @@ button.clear-round{
 }
 button.clear-round small{display:block; font-size:10px; font-weight:700; opacity:0.92;}
 button.clear-round:active{
-  transform:translateY(4px);
   box-shadow:0 1px 3px rgba(0,0,0,0.5), inset 0 3px 8px rgba(0,0,0,0.45);
 }
 /* ═══════════ RACK SETTINGS (tab 3) ═══════════ */
@@ -242,7 +246,7 @@ button.clear-round:active{
   <div>
     <h1>Plate &amp; Load Calc</h1>
     <p>For Fitbod barbell lifts</p>
-    <p class="header-sub">v2.1</p>
+    <p class="header-sub">v2.2</p>
     <p class="weather-line" id="weatherLine"><span style="color:#8a94b0;font-style:italic;">Loading weather...</span></p>
   </div>
   <div class="barbell-icon">
