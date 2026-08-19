@@ -138,10 +138,14 @@ html, body { background:var(--bg); color:var(--text); font-family:-apple-system,
 .load-section-label { display:flex; align-items:baseline; gap:12px; }
 .load-sec-title { font-size:18px; font-weight:700; color:var(--text); }
 .load-sec-sub { font-size:14px; color:var(--muted); }
-/* Clear-load button — a raised 3-D dome sitting OUTSIDE the plate grid,
-   to the left of the second row. Deliberately unlike the flat plate circles
-   so it reads as a control, not a weight. It used to be a full-width bar
-   that Tom kept hitting with a stray swipe. */
+/* Clear button — a raised 3-D dome sitting OUTSIDE the plate grid, to the
+   left of the second row. Deliberately unlike the flat plate circles so it
+   reads as a control, not a weight. It used to be a full-width bar that Tom
+   kept hitting with a stray swipe while scrolling on the mounted iPad.
+   v2.3: BOTH tabs use this. Plate Calculator = CLEAR weight (clears the
+   target); Load Calculator = CLEAR load (zeroes the plate selection). Same
+   dome, same left-gutter position, so the two tabs behave alike. If you
+   change one, change the other. */
 /* The plate grid stays centred exactly as it always was; the Clear button is
    taken OUT of the layout flow (absolute) and parked in the left gutter, so
    it cannot shift the row off-centre. Tom asked for the original centring. */
@@ -197,8 +201,6 @@ button.clear-round:active{
 .rack-add:active{background:var(--surface2); color:var(--text);}
 #page-rack{gap:7px;}
 /* Buttons */
-.reset-btn { width:100%; padding:18px; background:transparent; border:1px solid var(--border2); border-radius:14px; color:var(--muted); font-size:17px; font-weight:500; cursor:pointer; touch-action:manipulation; }
-.reset-btn:active { background:var(--surface2); color:var(--text); }
 </style>
 </head>
 <body>
@@ -208,7 +210,7 @@ button.clear-round:active{
   <div>
     <h1>Plate &amp; Load Calc</h1>
     <p>For Fitbod barbell lifts</p>
-    <p style="font-size:13px;color:#7a8099;margin-top:3px;font-weight:600;">v2.2</p>
+    <p style="font-size:13px;color:#7a8099;margin-top:3px;font-weight:600;">v2.3</p>
     <p class="weather-line" id="weatherLine"><span style="color:#8a94b0;font-style:italic;">Loading weather...</span></p>
   </div>
   <div class="barbell-icon">
@@ -294,13 +296,15 @@ button.clear-round:active{
     <div class="inv-item"><div class="pcircle" style="background:#1b8c2e;color:#fff;">25</div><label>25 lb plates</label><div class="inv-stepper"><button ontouchstart="event.preventDefault()" ontouchend="stepInv('i25',-1)" onclick="stepInv('i25',-1)">&#8722;</button><span class="inv-count" id="i25">2</span><button ontouchstart="event.preventDefault()" ontouchend="stepInv('i25',1)" onclick="stepInv('i25',1)">+</button></div></div>
     <div class="inv-item"><div class="pcircle" style="background:#212121;color:#fff;">10</div><label>10 lb plates</label><div class="inv-stepper"><button ontouchstart="event.preventDefault()" ontouchend="stepInv('i10',-1)" onclick="stepInv('i10',-1)">&#8722;</button><span class="inv-count" id="i10">4</span><button ontouchstart="event.preventDefault()" ontouchend="stepInv('i10',1)" onclick="stepInv('i10',1)">+</button></div></div>
   </div>
-  <div class="inv-grid-2">
+  <div class="loadrow2">
+    <button class="clear-round" ontouchstart="event.preventDefault()" ontouchend="clearWeight()" onclick="clearWeight()" aria-label="Clear weight">CLEAR<small>weight</small></button>
+    <div class="inv-grid-2">
     <div class="inv-item"><div class="pcircle" style="background:#7dd3fc;color:#0d2a3a;border:3px solid #fff;">5</div><label>5 lb plates</label><div class="inv-stepper"><button ontouchstart="event.preventDefault()" ontouchend="stepInv('i5',-1)" onclick="stepInv('i5',-1)">&#8722;</button><span class="inv-count" id="i5">2</span><button ontouchstart="event.preventDefault()" ontouchend="stepInv('i5',1)" onclick="stepInv('i5',1)">+</button></div></div>
     <div class="inv-item"><div class="pcircle" style="background:#86efac;color:#0d2a1a;border:3px solid #fff;">2.5</div><label>2.5 lb plates</label><div class="inv-stepper"><button ontouchstart="event.preventDefault()" ontouchend="stepInv('i2h',-1)" onclick="stepInv('i2h',-1)">&#8722;</button><span class="inv-count" id="i2h">2</span><button ontouchstart="event.preventDefault()" ontouchend="stepInv('i2h',1)" onclick="stepInv('i2h',1)">+</button></div></div>
     <div class="inv-item"><div class="pcircle" style="background:#f0f0f0;color:#1a1a1a;border:3px solid #aaa;">1.25</div><label>1.25 lb plates</label><div class="inv-stepper"><button ontouchstart="event.preventDefault()" ontouchend="stepInv('i125',-1)" onclick="stepInv('i125',-1)">&#8722;</button><span class="inv-count" id="i125">2</span><button ontouchstart="event.preventDefault()" ontouchend="stepInv('i125',1)" onclick="stepInv('i125',1)">+</button></div></div>
+    </div>
   </div>
 
-  <button class="reset-btn" ontouchstart="event.preventDefault()" ontouchend="clearWeight()" onclick="clearWeight()">Clear weight</button>
 
 </div><!-- end page-calc -->
 
