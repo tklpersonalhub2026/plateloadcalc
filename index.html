@@ -228,6 +228,17 @@ button.clear-round:active{
   border:1px solid var(--border2); color:var(--muted); font-size:15px; font-weight:700; line-height:1;
   display:flex; align-items:center; justify-content:center; cursor:pointer; touch-action:manipulation;}
 .rack-del:active{background:#5a1f1f; border-color:#c62828; color:#fff;}
+/* Drag handle (v2.4) — Apple-style grip. Tom reorders exercises to match the
+   order he actually works through them, so the list has to be sortable without
+   deleting and re-adding rows. touch-action:none is REQUIRED: without it iOS
+   scrolls the page instead of dragging the row. */
+.rack-grip{width:28px; flex-shrink:0; display:flex; align-items:center; justify-content:center;
+  color:#6b7396; font-size:17px; line-height:1; cursor:grab; touch-action:none;
+  -webkit-user-select:none; user-select:none; -webkit-tap-highlight-color:transparent;}
+.rack-grip:active{cursor:grabbing; color:var(--text);}
+.rack-row.rack-dragging{opacity:0.92; z-index:20; position:relative;
+  box-shadow:0 10px 24px rgba(0,0,0,0.55); border-color:var(--card-accent);}
+.rack-row.rack-shifting{transition:transform 0.16s ease;}
 .rack-add{width:100%; padding:10px; background:transparent; border:1.5px dashed var(--border2);
   border-radius:10px; color:var(--muted); font-family:inherit; font-size:13px; font-weight:700;
   cursor:pointer; touch-action:manipulation; margin-top:5px;}
@@ -248,7 +259,7 @@ button.clear-round:active{
   <div>
     <h1>Plate &amp; Load Calc</h1>
     <p>For Fitbod barbell lifts</p>
-    <p class="header-sub">v2.3</p>
+    <p class="header-sub">v2.4</p>
     <p class="weather-line" id="weatherLine"><span style="color:#8a94b0;font-style:italic;">Loading weather...</span></p>
   </div>
   <div class="barbell-icon">
@@ -428,6 +439,7 @@ button.clear-round:active{
   <div class="rack-note">Tap a number to change it. Leave blank for &#8212; when that attachment isn't used.</div>
 
   <div class="rack-cols">
+    <span style="width:28px;"></span>
     <span class="spacer">Exercise</span>
     <span>J-Hook</span>
     <span>Spotter</span>
@@ -705,7 +717,8 @@ function rackRender(){
   var h="";
   for(var i=0;i<RACK.length;i++){
     var r=RACK[i];
-    h+='<div class="rack-row">'
+    h+='<div class="rack-row" data-i="'+i+'">'
+     +  '<span class="rack-grip" onpointerdown="rackDragStart(event,'+i+')" aria-label="Drag to reorder">&#9776;</span>'
      +  '<input class="rack-name" type="text" value="'+String(r.n).replace(/"/g,'&quot;')+'" '
      +        'placeholder="Exercise" oninput="rackSet('+i+',\'n\',this.value)">'
      +  '<input class="rack-val" type="number" inputmode="numeric" min="1" max="35" placeholder="&#8212;" '
@@ -716,6 +729,94 @@ function rackRender(){
      +'</div>';
   }
   host.innerHTML=h;
+}
+/* ── Drag to reorder (v2.4) ───────────────────────────────────────────────
+   Pointer Events so one code path covers finger on the iPad and mouse on the
+   Mac. While dragging, the picked-up row follows the pointer and the rows it
+   passes slide out of the way, so the drop position is always visible. The
+   array is only reordered once, on release, then saved and re-rendered.
+
+   Notes for anyone changing this:
+   - .rack-grip MUST keep touch-action:none or iOS scrolls instead of dragging.
+   - Only the grip starts a drag; the name and number fields stay editable.
+   - Row pitch is measured live rather than hard-coded, because the iPhone and
+     iPad rows are different heights and Tom has tuned them before.           */
+var rkDrag=null;
+
+function rackRowEls(){ return document.querySelectorAll("#rackRows .rack-row"); }
+
+function rackDragStart(e,i){
+  if(e.button!==undefined && e.button!==0) return;   /* left button / touch only */
+  var rows=rackRowEls(), el=rows[i];
+  if(!el) return;
+  e.preventDefault();
+  try{ e.target.setPointerCapture(e.pointerId); }catch(err){}
+
+  var pitch = rows.length>1
+    ? (rows[1].getBoundingClientRect().top - rows[0].getBoundingClientRect().top)
+    : el.getBoundingClientRect().height;
+
+  rkDrag={ i:i, to:i, el:el, rows:rows, y0:e.clientY, pitch:pitch, id:e.pointerId };
+  el.classList.add("rack-dragging");
+  for(var k=0;k<rows.length;k++) if(k!==i) rows[k].classList.add("rack-shifting");
+
+  document.addEventListener("pointermove", rackDragMove);
+  document.addEventListener("pointerup", rackDragEnd);
+  document.addEventListener("pointercancel", rackDragEnd);
+}
+
+function rackDragMove(e){
+  if(!rkDrag) return;
+  e.preventDefault();
+  var dy=e.clientY-rkDrag.y0;
+  rkDrag.el.style.transform="translateY("+dy+"px)";
+
+  var steps=Math.round(dy/rkDrag.pitch);
+  var to=rkDrag.i+steps;
+  if(to<0) to=0;
+  if(to>rkDrag.rows.length-1) to=rkDrag.rows.length-1;
+  if(to===rkDrag.to) return;
+  rkDrag.to=to;
+
+  /* Slide the passed-over rows into the gap the dragged row left behind. */
+  for(var k=0;k<rkDrag.rows.length;k++){
+    if(k===rkDrag.i) continue;
+    var shift=0;
+    if(k>rkDrag.i && k<=to)      shift=-rkDrag.pitch;
+    else if(k<rkDrag.i && k>=to) shift= rkDrag.pitch;
+    rkDrag.rows[k].style.transform = shift ? "translateY("+shift+"px)" : "";
+  }
+}
+
+function rackDragEnd(e){
+  if(!rkDrag) return;
+  document.removeEventListener("pointermove", rackDragMove);
+  document.removeEventListener("pointerup", rackDragEnd);
+  document.removeEventListener("pointercancel", rackDragEnd);
+
+  var from=rkDrag.i, to=rkDrag.to;
+  for(var k=0;k<rkDrag.rows.length;k++){
+    rkDrag.rows[k].style.transform="";
+    rkDrag.rows[k].classList.remove("rack-dragging","rack-shifting");
+  }
+  rkDrag=null;
+
+  if(to!==from && RACK[from]){
+    var moved=RACK.splice(from,1)[0];
+    RACK.splice(to,0,moved);
+    rackSave();
+  }
+  rackRender();
+}
+
+/* Programmatic move — used by the tests, and a safe entry point if a
+   keyboard or menu reorder is ever added. */
+function rackMove(from,to){
+  if(from===to) return;
+  if(from<0||from>=RACK.length||to<0||to>=RACK.length) return;
+  var moved=RACK.splice(from,1)[0];
+  RACK.splice(to,0,moved);
+  rackSave(); rackRender();
 }
 function rackSet(i,field,val){
   if(!RACK[i]) return;
