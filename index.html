@@ -259,7 +259,7 @@ button.clear-round:active{
   <div>
     <h1>Plate &amp; Load Calc</h1>
     <p>For Fitbod barbell lifts</p>
-    <p class="header-sub">v2.4</p>
+    <p class="header-sub">v2.5</p>
     <p class="weather-line" id="weatherLine"><span style="color:#8a94b0;font-style:italic;">Loading weather...</span></p>
   </div>
   <div class="barbell-icon">
@@ -326,7 +326,7 @@ button.clear-round:active{
       <div class="leg-chips-row"><div class="leg-chips-top"><span class="plabel">Plates on horn</span></div><div class="chips" id="legChips"><span class="chip-none">enter weight above</span></div><div id="legApprox"></div></div>
     </div>
     <div class="lp-half" id="lpSection">
-      <div class="lp-head"><h2>Leg Press</h2><div class="bar-name">(ForceUSA Compact Leg Press/Hack Squat)</div><div class="bar-weight">38 lb sled &#183; 30&#176; &#183; two horns</div></div>
+      <div class="lp-head"><h2>Leg Press</h2><div class="bar-name">(ForceUSA Compact Leg Press/Hack Squat)</div><div class="bar-weight">30&#176; sled &#183; two horns &#183; angle compensated</div></div>
       <div class="lp-stat"><span class="slabel">Total plates</span><div class="stat-row"><span class="sval dim" id="tpLP">&#8212; lbs</span><span id="deltaLP"></span></div></div>
       <div class="lp-stat"><span class="slabel">Per horn</span><span class="sval dim" id="psLP">&#8212; lbs</span></div>
       <div class="lp-chips-row"><div class="lp-chips-top"><span class="plabel">Plates per horn</span><span id="lpBadge"></span></div><div class="chips" id="lpChips"><span class="chip-none">enter weight above</span></div><div id="lpApprox"></div></div>
@@ -421,9 +421,9 @@ button.clear-round:active{
       <div class="leg-chips-row"><div class="leg-chips-top"><span class="plabel">Plates on horn</span></div><div class="chips" id="lchipsLeg"><span class="chip-none">none selected</span></div></div>
     </div>
     <div class="lp-half" id="lcolLP">
-      <div class="lp-head"><h2>Leg Press</h2><div class="bar-name">(ForceUSA Compact Leg Press/Hack Squat)</div><div class="bar-weight">38 lb sled &#183; 30&#176; &#183; two horns</div></div>
-      <div class="lp-stat"><span class="slabel">Plates + sled</span><div class="stat-row"><span class="sval dim" id="ltotalLP">38 lbs</span><span id="lstatusLP"></span></div></div>
-      <div class="lp-stat"><span class="slabel">Per horn</span><span class="sval dim" id="lpsLP">sled only</span></div>
+      <div class="lp-head"><h2>Leg Press</h2><div class="bar-name">(ForceUSA Compact Leg Press/Hack Squat)</div><div class="bar-weight">30&#176; sled &#183; two horns &#183; angle compensated</div></div>
+      <div class="lp-stat"><span class="slabel">Effective load</span><div class="stat-row"><span class="sval dim" id="ltotalLP">0 lbs</span><span id="lstatusLP"></span></div></div>
+      <div class="lp-stat"><span class="slabel">Per horn</span><span class="sval dim" id="lpsLP">none selected</span></div>
       <div class="lp-chips-row"><div class="lp-chips-top"><span class="plabel">Plates per horn</span></div><div class="chips" id="lchipsLP"><span class="chip-none">none selected</span></div></div>
     </div>
   </div>
@@ -461,17 +461,36 @@ var INV_IDS=["i45","i35","i25","i10","i5","i2h","i125"];
 var INV_VALS=[45,35,25,10,5,2.5,1.25];
 var BARS=[{suffix:"44",weight:44,exact:44.092},{suffix:"33",weight:33,exact:33.069},{suffix:"35",weight:35.5,exact:35.274}];
 var LAND_EFF=22;
-/* ── Leg Press (ForceUSA Compact Leg Press/Hack Squat) ──
-   Basis (Tom, v2.0): load exactly what Fitbod recommends, no adjustments.
-   Two horns, so each horn takes half the target:   per horn = target / 2
+/* ── Leg Press (ForceUSA Compact Leg Press/Hack Squat) ──────────────────
+   Basis (Tom, v2.5): compensate for the sled angle, ignore the sled weight.
 
-   Body weight, the 38 lb sled and the 30 degree incline are deliberately NOT
-   factored in. Tom's reasoning: a barbell squat also moves your body and
-   nobody discounts it, and Fitbod anchors to what you actually lift, so any
-   fixed offset washes out of the progression after the first session.
-   Applying sin(30) also demanded more plates than he owns.
-   Do not reintroduce without asking him.                                  */
-var LP_SLED=38;            // sled weight - shown on the card as information only
+   WHY. Fitbod's targets are anchored to commercial machines whose geometry
+   delivers close to the full plate load (see the three reference exercises he
+   compared: leg press, hack squat, standing calf press). On the CLP the sled
+   runs at an angle, so the same plates feel lighter and he was landing well
+   under target. He wants to lift near true weight so numbers carry over when
+   he trains at a commercial gym.
+
+   THE CONSTANT. The machine is specced at 30 degrees. Measured from HORIZONTAL
+   that would give sin(30) = 0.50 and demand double the plates — nothing like
+   what he felt. Measured as lean off VERTICAL the sled travels 60 degrees
+   above horizontal, so the component along the rails is
+        sin(60) = cos(30) = 0.866
+   Tom independently tried dividing by 0.88 on the calf raise and it landed in
+   his range. 0.866 and 0.88 agree to 1.6%, which is what confirms the spec is
+   measured off vertical. If he ever wants his empirical 0.88 exactly, change
+   the one constant below and nothing else.
+
+   THE MATH.  plates to load   = target / 0.866      (he loads MORE than target)
+              effective load   = plates * 0.866      (the exact inverse)
+   Both tabs use the same constant so the Load Calculator is the true inverse
+   of the Plate Calculator.
+
+   SLED WEIGHT IS STILL EXCLUDED — deliberately, at his request, until he has
+   more time on the machine. LP_SLED stays defined but is NOT in any formula.
+   Do not fold it in without asking him.                                   */
+var LP_ANGLE=0.866;        // cos(30 degrees) — sled travels 60 deg above horizontal
+var LP_SLED=38;            // NOT used in any calculation; kept for reference only
 var LOAD_SEL={45:0,35:0,25:0,10:0,5:0,2.5:0,1.25:0};
 var DENOM_TO_LSID={45:'ls45',35:'ls35',25:'ls25',10:'ls10',5:'ls5',2.5:'ls2h',1.25:'ls125'};
 var DENOM_TO_LMID={45:'lmax45',35:'lmax35',25:'lmax25',10:'lmax10',5:'lmax5',2.5:'lmax2h',1.25:'lmax125'};
@@ -527,17 +546,20 @@ function updateLegPress(tv){
       approxEl=document.getElementById("lpApprox"),deltaEl=document.getElementById("deltaLP");
   if(!tv||tv<=0){sec.className="lp-half";tpEl.className="sval dim";tpEl.textContent="\u2014 lbs";psEl.className="sval dim";psEl.textContent="\u2014 lbs";badgeEl.innerHTML="";chipsEl.innerHTML='<span class="chip-none">enter weight above</span>';approxEl.innerHTML="";if(deltaEl)deltaEl.innerHTML="";return;}
   sec.className="lp-half active";
-  /* Load exactly what Fitbod asks for, split across the two horns. */
-  var tp=Math.round(tv/2.5)*2.5, ph=tp/2;
+  /* Solve backwards through the angle: to FEEL tv, load tv / LP_ANGLE. */
+  var need=tv/LP_ANGLE;
+  var tp=Math.round(need/2.5)*2.5, ph=tp/2;
   tpEl.className="sval";tpEl.textContent=fmt(tp)+" lbs";
   psEl.className="sval lp";psEl.textContent=fmt(ph)+" lbs";
-  if(deltaEl){var dp=Math.round((tp-tv)*100)/100;
+  /* Delta compares the EFFECTIVE load actually achieved against the target,
+     not the plate weight — plate weight is deliberately higher than target. */
+  if(deltaEl){var dp=Math.round((tp*LP_ANGLE-tv)*100)/100;
     if(dp===0)deltaEl.innerHTML="";
     else if(dp>0)deltaEl.innerHTML='<span class="delta-over">+'+dp.toFixed(2)+' lbs</span>';
     else deltaEl.innerHTML='<span class="delta-under">'+dp.toFixed(2)+' lbs</span>';}
   if(ph===0){badgeEl.innerHTML="";chipsEl.innerHTML='<span class="bar-only">No plates needed</span>';approxEl.innerHTML="";return;}
-  var inv=getBarInv(),res=findPlates(ph,inv),aPH=res.rounded-res.leftover,aT=aPH*2;
-  badgeEl.innerHTML=res.exact?'<span class="badge badge-exact">EXACT</span>':'<span class="badge badge-approx">~'+fmt(aT)+' lbs</span>';
+  var inv=getBarInv(),res=findPlates(ph,inv),aPH=res.rounded-res.leftover,aEff=aPH*2*LP_ANGLE;
+  badgeEl.innerHTML=res.exact?'<span class="badge badge-exact">EXACT</span>':'<span class="badge badge-approx">~'+fmt(Math.round(aEff*10)/10)+' lbs felt</span>';
   chipsEl.innerHTML=res.plates.length?buildChips(res.plates):'<span class="chip-err">No solution</span>';
   approxEl.innerHTML=(!res.exact&&res.plates.length)?'<div class="approx-note">Closest: '+fmt(aPH)+' lbs/horn</div>':"";
 }
@@ -627,8 +649,8 @@ function updateLoad(){
   if(lpColEl){
     if(!hasPlates){
       lpColEl.className='lp-half';
-      lpTotEl.className='sval dim';lpTotEl.textContent=fmt(LP_SLED)+' lbs';
-      lpPsEl.className='sval dim';lpPsEl.textContent='sled only';
+      lpTotEl.className='sval dim';lpTotEl.textContent='0 lbs';
+      lpPsEl.className='sval dim';lpPsEl.textContent='none selected';
       if(lpStatEl)lpStatEl.innerHTML='';
       lpChipsEl.innerHTML='<span class="chip-none">none selected</span>';
     } else if(exceeds){
@@ -639,7 +661,7 @@ function updateLoad(){
       lpChipsEl.innerHTML='<span class="chip-err">Cannot load — insufficient plates</span>';
     } else {
       lpColEl.className='lp-half active';
-      lpTotEl.className='sval lp';lpTotEl.textContent=fmt(plateWt*2+LP_SLED)+' lbs';
+      lpTotEl.className='sval lp';lpTotEl.textContent=fmt(Math.round(plateWt*2*LP_ANGLE*10)/10)+' lbs';
       lpPsEl.className='sval lp';lpPsEl.textContent=fmt(plateWt)+' lbs/horn';
       if(lpStatEl)lpStatEl.innerHTML='';
       lpChipsEl.innerHTML=chipsHtml||'<span class="chip-none">none selected</span>';
