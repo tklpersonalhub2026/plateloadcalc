@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- APP_VERSION v2.7 — canonical machine-readable version.
+<!-- APP_VERSION v2.8 — canonical machine-readable version.
      #2 and #3 read THIS line, never a loose "vX.Y" in prose.
      A comment mentioning an old version used to shadow the real one
      and made the deploy check vacuous. Keep this immediately after
@@ -124,7 +124,7 @@ html, body { background:var(--bg); color:var(--text); font-family:-apple-system,
 .badge-exceeds { font-size:9px; font-weight:800; padding:2px 6px; border-radius:20px; background:#fee2e2; color:#991b1b; }
 .chips { display:flex; flex-wrap:wrap; gap:4px; }
 .chip { font-size:11px; font-weight:800; padding:4px 8px; border-radius:20px; }
-.c45{background:#1565c0;color:#fff;} .c35{background:#f9d000;color:#111;} .c25{background:#1b8c2e;color:#fff;}
+.c55{background:#c62828;color:#fff;} .c45{background:#1565c0;color:#fff;} .c35{background:#f9d000;color:#111;} .c25{background:#1b8c2e;color:#fff;}
 .c10{background:#212121;color:#fff;} .c5{background:#7dd3fc;color:#0d2a3a;} .c25s{background:#86efac;color:#0d2a1a;}
 .c125{background:#f0f0f0;color:#1a1a1a;border:1.5px solid #aaa;}
 .chip-none { font-size:11px; color:#b0bcd0; font-style:italic; }
@@ -170,7 +170,10 @@ html, body { background:var(--bg); color:var(--text); font-family:-apple-system,
 .inv-title { font-size:16px; font-weight:700; color:var(--text); }
 .inv-sub { font-size:12px; color:var(--muted); }
 .inv-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
-.inv-grid-2 { display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin-top:8px; max-width:66%; margin-left:auto; margin-right:auto; }
+.inv-grid-2 { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:8px; }
+.loadhead{display:flex; align-items:center; justify-content:space-between; gap:10px;}
+.loadhead > button.clear-round{flex-shrink:0;}
+.loadhead > button.clear-round:active{transform:translateY(4px);}
 .inv-grid-3 { display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin-top:8px; max-width:66%; margin-left:auto; margin-right:auto; }
 .inv-item { background:var(--surface); border:1px solid var(--border2); border-radius:var(--radius-sm); padding:10px 8px; text-align:center; }
 .pcircle { width:42px; height:42px; border-radius:50%; margin:0 auto 6px; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:900; border:3px solid #fff; }
@@ -274,7 +277,7 @@ button.clear-round:active{
   <div>
     <h1>Plate &amp; Load Calc</h1>
     <p>For Fitbod barbell lifts</p>
-    <p class="header-sub">v2.7</p>
+    <p class="header-sub">v2.8</p>
     <p class="weather-line" id="weatherLine"><span style="color:#8a94b0;font-style:italic;">Loading weather...</span></p>
   </div>
   <div class="barbell-icon">
@@ -354,18 +357,20 @@ button.clear-round:active{
   <div class="inv-header"><div class="inv-title">Plate inventory</div><div class="inv-sub">Tap + / &#8722; to adjust</div></div>
 
   <div class="inv-grid">
-    <div class="inv-item"><div class="pcircle" style="background:#1565c0;color:#fff;">45</div><label>45 lb plates</label><div class="inv-stepper"><button ontouchstart="event.preventDefault()" ontouchend="stepInv('i45',-1)" onclick="stepInv('i45',-1)">&#8722;</button><span class="inv-count" id="i45">2</span><button ontouchstart="event.preventDefault()" ontouchend="stepInv('i45',1)" onclick="stepInv('i45',1)">+</button></div></div>
-    <div class="inv-item"><div class="pcircle" style="background:#f9d000;color:#111;">35</div><label>35 lb plates</label><div class="inv-stepper"><button ontouchstart="event.preventDefault()" ontouchend="stepInv('i35',-1)" onclick="stepInv('i35',-1)">&#8722;</button><span class="inv-count" id="i35">2</span><button ontouchstart="event.preventDefault()" ontouchend="stepInv('i35',1)" onclick="stepInv('i35',1)">+</button></div></div>
-    <div class="inv-item"><div class="pcircle" style="background:#1b8c2e;color:#fff;">25</div><label>25 lb plates</label><div class="inv-stepper"><button ontouchstart="event.preventDefault()" ontouchend="stepInv('i25',-1)" onclick="stepInv('i25',-1)">&#8722;</button><span class="inv-count" id="i25">2</span><button ontouchstart="event.preventDefault()" ontouchend="stepInv('i25',1)" onclick="stepInv('i25',1)">+</button></div></div>
+      <div class="inv-item"><div class="pcircle" style="background:#c62828;color:#fff;">55</div><label>55 lb plates</label><div class="inv-stepper"><button ontouchstart="event.preventDefault()" ontouchend="stepInv('i55',-1)" onclick="stepInv('i55',-1)">&#8722;</button><span class="inv-count" id="i55">2</span><button ontouchstart="event.preventDefault()" ontouchend="stepInv('i55',1)" onclick="stepInv('i55',1)">+</button></div></div>
+      <div class="inv-item"><div class="pcircle" style="background:#1565c0;color:#fff;">45</div><label>45 lb plates</label><div class="inv-stepper"><button ontouchstart="event.preventDefault()" ontouchend="stepInv('i45',-1)" onclick="stepInv('i45',-1)">&#8722;</button><span class="inv-count" id="i45">4</span><button ontouchstart="event.preventDefault()" ontouchend="stepInv('i45',1)" onclick="stepInv('i45',1)">+</button></div></div>
+      <div class="inv-item"><div class="pcircle" style="background:#f9d000;color:#111;">35</div><label>35 lb plates</label><div class="inv-stepper"><button ontouchstart="event.preventDefault()" ontouchend="stepInv('i35',-1)" onclick="stepInv('i35',-1)">&#8722;</button><span class="inv-count" id="i35">4</span><button ontouchstart="event.preventDefault()" ontouchend="stepInv('i35',1)" onclick="stepInv('i35',1)">+</button></div></div>
   </div>
   <div class="inv-grid-2">
-    <div class="inv-item"><div class="pcircle" style="background:#212121;color:#fff;">10</div><label>10 lb plates</label><div class="inv-stepper"><button ontouchstart="event.preventDefault()" ontouchend="stepInv('i10',-1)" onclick="stepInv('i10',-1)">&#8722;</button><span class="inv-count" id="i10">4</span><button ontouchstart="event.preventDefault()" ontouchend="stepInv('i10',1)" onclick="stepInv('i10',1)">+</button></div></div>
-    <div class="inv-item"><div class="pcircle" style="background:#7dd3fc;color:#0d2a3a;border:3px solid #fff;">5</div><label>5 lb plates</label><div class="inv-stepper"><button ontouchstart="event.preventDefault()" ontouchend="stepInv('i5',-1)" onclick="stepInv('i5',-1)">&#8722;</button><span class="inv-count" id="i5">2</span><button ontouchstart="event.preventDefault()" ontouchend="stepInv('i5',1)" onclick="stepInv('i5',1)">+</button></div></div>
+      <div class="inv-item"><div class="pcircle" style="background:#1b8c2e;color:#fff;">25</div><label>25 lb plates</label><div class="inv-stepper"><button ontouchstart="event.preventDefault()" ontouchend="stepInv('i25',-1)" onclick="stepInv('i25',-1)">&#8722;</button><span class="inv-count" id="i25">4</span><button ontouchstart="event.preventDefault()" ontouchend="stepInv('i25',1)" onclick="stepInv('i25',1)">+</button></div></div>
+      <div class="inv-item"><div class="pcircle" style="background:#212121;color:#fff;">10</div><label>10 lb plates</label><div class="inv-stepper"><button ontouchstart="event.preventDefault()" ontouchend="stepInv('i10',-1)" onclick="stepInv('i10',-1)">&#8722;</button><span class="inv-count" id="i10">8</span><button ontouchstart="event.preventDefault()" ontouchend="stepInv('i10',1)" onclick="stepInv('i10',1)">+</button></div></div>
+      <div class="inv-item"><div class="pcircle" style="background:#7dd3fc;color:#0d2a3a;border:3px solid #fff;">5</div><label>5 lb plates</label><div class="inv-stepper"><button ontouchstart="event.preventDefault()" ontouchend="stepInv('i5',-1)" onclick="stepInv('i5',-1)">&#8722;</button><span class="inv-count" id="i5">2</span><button ontouchstart="event.preventDefault()" ontouchend="stepInv('i5',1)" onclick="stepInv('i5',1)">+</button></div></div>
   </div>
   <div class="inv-grid-3">
-    <div class="inv-item"><div class="pcircle" style="background:#86efac;color:#0d2a1a;border:3px solid #fff;">2.5</div><label>2.5 lb plates</label><div class="inv-stepper"><button ontouchstart="event.preventDefault()" ontouchend="stepInv('i2h',-1)" onclick="stepInv('i2h',-1)">&#8722;</button><span class="inv-count" id="i2h">2</span><button ontouchstart="event.preventDefault()" ontouchend="stepInv('i2h',1)" onclick="stepInv('i2h',1)">+</button></div></div>
-    <div class="inv-item"><div class="pcircle" style="background:#f0f0f0;color:#1a1a1a;border:3px solid #aaa;">1.25</div><label>1.25 lb plates</label><div class="inv-stepper"><button ontouchstart="event.preventDefault()" ontouchend="stepInv('i125',-1)" onclick="stepInv('i125',-1)">&#8722;</button><span class="inv-count" id="i125">2</span><button ontouchstart="event.preventDefault()" ontouchend="stepInv('i125',1)" onclick="stepInv('i125',1)">+</button></div></div>
+      <div class="inv-item"><div class="pcircle" style="background:#86efac;color:#0d2a1a;border:3px solid #fff;">2.5</div><label>2.5 lb plates</label><div class="inv-stepper"><button ontouchstart="event.preventDefault()" ontouchend="stepInv('i2h',-1)" onclick="stepInv('i2h',-1)">&#8722;</button><span class="inv-count" id="i2h">2</span><button ontouchstart="event.preventDefault()" ontouchend="stepInv('i2h',1)" onclick="stepInv('i2h',1)">+</button></div></div>
+      <div class="inv-item"><div class="pcircle" style="background:#f0f0f0;color:#1a1a1a;border:3px solid #aaa;">1.25</div><label>1.25 lb plates</label><div class="inv-stepper"><button ontouchstart="event.preventDefault()" ontouchend="stepInv('i125',-1)" onclick="stepInv('i125',-1)">&#8722;</button><span class="inv-count" id="i125">2</span><button ontouchstart="event.preventDefault()" ontouchend="stepInv('i125',1)" onclick="stepInv('i125',1)">+</button></div></div>
   </div>
+
 
 
 </div><!-- end page-calc -->
@@ -373,25 +378,22 @@ button.clear-round:active{
 <!-- ═══════════════════════════ LOAD CALCULATOR PAGE ═══════════════════════════ -->
 <div id="page-load" class="page hidden">
 
-  <div class="inv-header"><div class="inv-title">Select plates to load</div><div class="inv-sub">Per side for bars · total for single-end</div></div>
+  <div class="inv-header loadhead"><div><div class="inv-title">Select plates to load</div><div class="inv-sub">Per side for bars · total for single-end</div></div><button class="clear-round" ontouchstart="event.preventDefault()" ontouchend="clearLoad()" onclick="clearLoad()" aria-label="Clear load">CLEAR<small>load</small></button></div>
 
   <div class="inv-grid">
-    <div class="inv-item"><div class="pcircle" style="background:#1565c0;color:#fff;">45</div><label>45 lb</label><div class="inv-stepper"><button ontouchstart="event.preventDefault()" ontouchend="stepLoad(45,-1)" onclick="stepLoad(45,-1)">&#8722;</button><span class="load-count" id="ls45">0</span><button ontouchstart="event.preventDefault()" ontouchend="stepLoad(45,1)" onclick="stepLoad(45,1)">+</button></div><div class="load-max" id="lmax45">max: 0</div></div>
-    <div class="inv-item"><div class="pcircle" style="background:#f9d000;color:#111;">35</div><label>35 lb</label><div class="inv-stepper"><button ontouchstart="event.preventDefault()" ontouchend="stepLoad(35,-1)" onclick="stepLoad(35,-1)">&#8722;</button><span class="load-count" id="ls35">0</span><button ontouchstart="event.preventDefault()" ontouchend="stepLoad(35,1)" onclick="stepLoad(35,1)">+</button></div><div class="load-max" id="lmax35">max: 0</div></div>
-    <div class="inv-item"><div class="pcircle" style="background:#1b8c2e;color:#fff;">25</div><label>25 lb</label><div class="inv-stepper"><button ontouchstart="event.preventDefault()" ontouchend="stepLoad(25,-1)" onclick="stepLoad(25,-1)">&#8722;</button><span class="load-count" id="ls25">0</span><button ontouchstart="event.preventDefault()" ontouchend="stepLoad(25,1)" onclick="stepLoad(25,1)">+</button></div><div class="load-max" id="lmax25">max: 0</div></div>
+      <div class="inv-item"><div class="pcircle" style="background:#c62828;color:#fff;">55</div><label>55 lb</label><div class="inv-stepper"><button ontouchstart="event.preventDefault()" ontouchend="stepLoad(55,-1)" onclick="stepLoad(55,-1)">&#8722;</button><span class="load-count" id="ls55">0</span><button ontouchstart="event.preventDefault()" ontouchend="stepLoad(55,1)" onclick="stepLoad(55,1)">+</button></div><div class="load-max" id="lmax55">max: 0</div></div>
+      <div class="inv-item"><div class="pcircle" style="background:#1565c0;color:#fff;">45</div><label>45 lb</label><div class="inv-stepper"><button ontouchstart="event.preventDefault()" ontouchend="stepLoad(45,-1)" onclick="stepLoad(45,-1)">&#8722;</button><span class="load-count" id="ls45">0</span><button ontouchstart="event.preventDefault()" ontouchend="stepLoad(45,1)" onclick="stepLoad(45,1)">+</button></div><div class="load-max" id="lmax45">max: 0</div></div>
+      <div class="inv-item"><div class="pcircle" style="background:#f9d000;color:#111;">35</div><label>35 lb</label><div class="inv-stepper"><button ontouchstart="event.preventDefault()" ontouchend="stepLoad(35,-1)" onclick="stepLoad(35,-1)">&#8722;</button><span class="load-count" id="ls35">0</span><button ontouchstart="event.preventDefault()" ontouchend="stepLoad(35,1)" onclick="stepLoad(35,1)">+</button></div><div class="load-max" id="lmax35">max: 0</div></div>
   </div>
-  <div class="loadrow2">
-    <button class="clear-round" ontouchstart="event.preventDefault()" ontouchend="clearLoad()" onclick="clearLoad()" aria-label="Clear load">CLEAR<small>load</small></button>
-    <div class="inv-grid-2">
-    <div class="inv-item"><div class="pcircle" style="background:#212121;color:#fff;">10</div><label>10 lb</label><div class="inv-stepper"><button ontouchstart="event.preventDefault()" ontouchend="stepLoad(10,-1)" onclick="stepLoad(10,-1)">&#8722;</button><span class="load-count" id="ls10">0</span><button ontouchstart="event.preventDefault()" ontouchend="stepLoad(10,1)" onclick="stepLoad(10,1)">+</button></div><div class="load-max" id="lmax10">max: 0</div></div>
-    <div class="inv-item"><div class="pcircle" style="background:#7dd3fc;color:#0d2a3a;border:3px solid #fff;">5</div><label>5 lb</label><div class="inv-stepper"><button ontouchstart="event.preventDefault()" ontouchend="stepLoad(5,-1)" onclick="stepLoad(5,-1)">&#8722;</button><span class="load-count" id="ls5">0</span><button ontouchstart="event.preventDefault()" ontouchend="stepLoad(5,1)" onclick="stepLoad(5,1)">+</button></div><div class="load-max" id="lmax5">max: 0</div></div>
-    </div>
+  <div class="inv-grid-2">
+      <div class="inv-item"><div class="pcircle" style="background:#1b8c2e;color:#fff;">25</div><label>25 lb</label><div class="inv-stepper"><button ontouchstart="event.preventDefault()" ontouchend="stepLoad(25,-1)" onclick="stepLoad(25,-1)">&#8722;</button><span class="load-count" id="ls25">0</span><button ontouchstart="event.preventDefault()" ontouchend="stepLoad(25,1)" onclick="stepLoad(25,1)">+</button></div><div class="load-max" id="lmax25">max: 0</div></div>
+      <div class="inv-item"><div class="pcircle" style="background:#212121;color:#fff;">10</div><label>10 lb</label><div class="inv-stepper"><button ontouchstart="event.preventDefault()" ontouchend="stepLoad(10,-1)" onclick="stepLoad(10,-1)">&#8722;</button><span class="load-count" id="ls10">0</span><button ontouchstart="event.preventDefault()" ontouchend="stepLoad(10,1)" onclick="stepLoad(10,1)">+</button></div><div class="load-max" id="lmax10">max: 0</div></div>
+      <div class="inv-item"><div class="pcircle" style="background:#7dd3fc;color:#0d2a3a;border:3px solid #fff;">5</div><label>5 lb</label><div class="inv-stepper"><button ontouchstart="event.preventDefault()" ontouchend="stepLoad(5,-1)" onclick="stepLoad(5,-1)">&#8722;</button><span class="load-count" id="ls5">0</span><button ontouchstart="event.preventDefault()" ontouchend="stepLoad(5,1)" onclick="stepLoad(5,1)">+</button></div><div class="load-max" id="lmax5">max: 0</div></div>
   </div>
   <div class="inv-grid-3">
-    <div class="inv-item"><div class="pcircle" style="background:#86efac;color:#0d2a1a;border:3px solid #fff;">2.5</div><label>2.5 lb</label><div class="inv-stepper"><button ontouchstart="event.preventDefault()" ontouchend="stepLoad(2.5,-1)" onclick="stepLoad(2.5,-1)">&#8722;</button><span class="load-count" id="ls2h">0</span><button ontouchstart="event.preventDefault()" ontouchend="stepLoad(2.5,1)" onclick="stepLoad(2.5,1)">+</button></div><div class="load-max" id="lmax2h">max: 0</div></div>
-    <div class="inv-item"><div class="pcircle" style="background:#f0f0f0;color:#1a1a1a;border:3px solid #aaa;">1.25</div><label>1.25 lb</label><div class="inv-stepper"><button ontouchstart="event.preventDefault()" ontouchend="stepLoad(1.25,-1)" onclick="stepLoad(1.25,-1)">&#8722;</button><span class="load-count" id="ls125">0</span><button ontouchstart="event.preventDefault()" ontouchend="stepLoad(1.25,1)" onclick="stepLoad(1.25,1)">+</button></div><div class="load-max" id="lmax125">max: 0</div></div>
+      <div class="inv-item"><div class="pcircle" style="background:#86efac;color:#0d2a1a;border:3px solid #fff;">2.5</div><label>2.5 lb</label><div class="inv-stepper"><button ontouchstart="event.preventDefault()" ontouchend="stepLoad(2.5,-1)" onclick="stepLoad(2.5,-1)">&#8722;</button><span class="load-count" id="ls2h">0</span><button ontouchstart="event.preventDefault()" ontouchend="stepLoad(2.5,1)" onclick="stepLoad(2.5,1)">+</button></div><div class="load-max" id="lmax2h">max: 0</div></div>
+      <div class="inv-item"><div class="pcircle" style="background:#f0f0f0;color:#1a1a1a;border:3px solid #aaa;">1.25</div><label>1.25 lb</label><div class="inv-stepper"><button ontouchstart="event.preventDefault()" ontouchend="stepLoad(1.25,-1)" onclick="stepLoad(1.25,-1)">&#8722;</button><span class="load-count" id="ls125">0</span><button ontouchstart="event.preventDefault()" ontouchend="stepLoad(1.25,1)" onclick="stepLoad(1.25,1)">+</button></div><div class="load-max" id="lmax125">max: 0</div></div>
   </div>
-
 
   <div class="divider"></div>
 
@@ -468,10 +470,10 @@ button.clear-round:active{
 </div><!-- end .app -->
 
 <script>
-var PLATES=[45,35,25,10,5,2.5,1.25];
-var CHIP_CLS={45:"c45",35:"c35",25:"c25",10:"c10",5:"c5",2.5:"c25s",1.25:"c125"};
-var INV_IDS=["i45","i35","i25","i10","i5","i2h","i125"];
-var INV_VALS=[45,35,25,10,5,2.5,1.25];
+var PLATES=[55,45,35,25,10,5,2.5,1.25];
+var CHIP_CLS={55:"c55",45:"c45",35:"c35",25:"c25",10:"c10",5:"c5",2.5:"c25s",1.25:"c125"};
+var INV_IDS=["i55","i45","i35","i25","i10","i5","i2h","i125"];
+var INV_VALS=[55,45,35,25,10,5,2.5,1.25];
 var BARS=[{suffix:"44",weight:44,exact:44.092},{suffix:"33",weight:33,exact:33.069},{suffix:"35",weight:35.5,exact:35.274}];
 var LAND_EFF=22;
 /* ── Leg Press (ForceUSA Compact Leg Press/Hack Squat) ──────────────────
@@ -504,9 +506,9 @@ var LAND_EFF=22;
    Do not fold it in without asking him.                                   */
 var LP_ANGLE=0.866;        // cos(30 degrees) — sled travels 60 deg above horizontal
 var LP_SLED=38;            // NOT used in any calculation; kept for reference only
-var LOAD_SEL={45:0,35:0,25:0,10:0,5:0,2.5:0,1.25:0};
-var DENOM_TO_LSID={45:'ls45',35:'ls35',25:'ls25',10:'ls10',5:'ls5',2.5:'ls2h',1.25:'ls125'};
-var DENOM_TO_LMID={45:'lmax45',35:'lmax35',25:'lmax25',10:'lmax10',5:'lmax5',2.5:'lmax2h',1.25:'lmax125'};
+var LOAD_SEL={55:0,45:0,35:0,25:0,10:0,5:0,2.5:0,1.25:0};
+var DENOM_TO_LSID={55:'ls55',45:'ls45',35:'ls35',25:'ls25',10:'ls10',5:'ls5',2.5:'ls2h',1.25:'ls125'};
+var DENOM_TO_LMID={55:'lmax55',45:'lmax45',35:'lmax35',25:'lmax25',10:'lmax10',5:'lmax5',2.5:'lmax2h',1.25:'lmax125'};
 
 function getInv(){var inv={};for(var i=0;i<INV_IDS.length;i++)inv[INV_VALS[i]]=parseInt(document.getElementById(INV_IDS[i]).textContent)||0;return inv;}
 function getBarInv(){var inv={};for(var i=0;i<INV_IDS.length;i++)inv[INV_VALS[i]]=Math.floor((parseInt(document.getElementById(INV_IDS[i]).textContent)||0)/2);return inv;}
@@ -579,7 +581,17 @@ function updateLegPress(tv){
 function update(){var val=parseFloat(document.getElementById("totalWeight").value)||0;for(var i=0;i<BARS.length;i++)updateCol(BARS[i],val);updateLeg(val);updateLandmine(val);updateLegPress(val);}
 
 function saveInv(){try{var obj={};for(var i=0;i<INV_IDS.length;i++)obj[INV_IDS[i]]=document.getElementById(INV_IDS[i]).textContent;localStorage.setItem("plc_inv",JSON.stringify(obj));}catch(e){}}
-function loadInv(){try{var saved=localStorage.getItem("plc_inv");if(!saved)return;var obj=JSON.parse(saved);var ok=true;for(var i=0;i<INV_IDS.length;i++){if(obj[INV_IDS[i]]===undefined){ok=false;break;}}if(!ok){localStorage.removeItem("plc_inv");return;}for(var i=0;i<INV_IDS.length;i++)document.getElementById(INV_IDS[i]).textContent=obj[INV_IDS[i]];}catch(e){}}
+function loadInv(){try{var saved=localStorage.getItem("plc_inv");if(!saved)return;var obj=JSON.parse(saved);
+  /* Tolerant on purpose (v2.8). The old code required EVERY id to be
+     present and wiped the lot otherwise, so adding the 55 lb plate
+     would have silently reset Tom's counts to defaults. Apply what is
+     there; leave anything new at its HTML default. */
+  for(var i=0;i<INV_IDS.length;i++){
+    var v=obj[INV_IDS[i]];
+    if(v===undefined||v===null) continue;
+    var el=document.getElementById(INV_IDS[i]);
+    if(el) el.textContent=v;
+  }}catch(e){}}
 function clearWeight(){document.getElementById("totalWeight").value="";update();}
 function stepUp(e){if(e)e.preventDefault();var el=document.getElementById("totalWeight");el.value=(parseFloat(el.value)||0)+5;update();}
 function stepDn(e){if(e)e.preventDefault();var el=document.getElementById("totalWeight");el.value=Math.max(0,(parseFloat(el.value)||0)-5);update();}
@@ -591,7 +603,10 @@ btnDn.addEventListener("touchend",stepDn,{passive:false});btnDn.addEventListener
 document.getElementById("totalWeight").addEventListener("input",update);
 
 function switchTab(tab){
-  if(tab==='load'){ clearLoad(); updateLoadMaxLabels(); }
+  /* v2.8: do NOT clear the selection here. Tom moves between tabs
+     mid-workout and expects what he entered to still be there.
+     Only refresh the max labels, which depend on inventory. */
+  if(tab==='load'){ updateLoadMaxLabels(); }
   var pages={calc:'page-calc', load:'page-load', rack:'page-rack'};
   var tabs ={calc:'tab-calc',  load:'tab-load',  rack:'tab-rack'};
   for(var k in pages){
