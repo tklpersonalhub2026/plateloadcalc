@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- APP_VERSION v2.8 — canonical machine-readable version.
+<!-- APP_VERSION v2.9 — canonical machine-readable version.
      #2 and #3 read THIS line, never a loose "vX.Y" in prose.
      A comment mentioning an old version used to shadow the real one
      and made the deploy check vacuous. Keep this immediately after
@@ -262,6 +262,25 @@ button.clear-round:active{
   cursor:pointer; touch-action:manipulation; margin-top:5px;}
 .rack-add:active{background:var(--surface2); color:var(--text);}
 #page-rack{gap:5px;}
+/* ═══════════ EQUIPMENT SETTINGS (tab 4, v2.9) ═══════════ */
+/* Same rows as Rack Settings (it reuses .rack-row, .rack-grip, .rack-name,
+   .rack-del) so the two pages look alike. Only the right-hand side differs:
+   one fixed-width notes box that grows downward as Tom types, instead of the
+   J-Hook and Spotter numbers. Rows top-align so a long note pushes the row
+   taller without the exercise name drifting to the middle. */
+.equip-row{align-items:flex-start;}
+.equip-row .rack-grip{margin-top:8px;}
+.equip-row .rack-name{margin-top:6px;}
+.equip-row .rack-del{margin-top:4px;}
+.equip-cols span.equip-notes-h{width:150px; text-align:left; padding-left:2px;}
+.equip-notes{width:150px; flex-shrink:0; display:block; background:var(--surface2);
+  border:1.5px solid var(--border2); border-radius:8px; color:var(--text);
+  font-family:inherit; font-size:14px; font-weight:600; line-height:1.3;
+  padding:6px 8px; outline:none; resize:none; overflow:hidden; min-height:0;
+  -webkit-appearance:none; appearance:none; box-sizing:border-box;}
+.equip-notes:focus{border-color:var(--card-accent); background:#2a3050;}
+.equip-notes::placeholder{color:#5a6280; font-weight:600;}
+#page-equip{gap:5px;}
 /* Buttons */
 /* Weather */
 .weather-line { font-size:12px; color:#8a94b0; margin-top:3px; letter-spacing:0.1px; }
@@ -277,7 +296,7 @@ button.clear-round:active{
   <div>
     <h1>Plate &amp; Load Calc</h1>
     <p>For Fitbod barbell lifts</p>
-    <p class="header-sub">v2.8</p>
+    <p class="header-sub">v2.9</p>
     <p class="weather-line" id="weatherLine"><span style="color:#8a94b0;font-style:italic;">Loading weather...</span></p>
   </div>
   <div class="barbell-icon">
@@ -298,6 +317,7 @@ button.clear-round:active{
   <button class="tab-btn active" id="tab-calc" ontouchstart="event.preventDefault()" ontouchend="switchTab('calc')" onclick="switchTab('calc')">Plate Calculator</button>
   <button class="tab-btn" id="tab-load" ontouchstart="event.preventDefault()" ontouchend="switchTab('load')" onclick="switchTab('load')">Load Calculator</button>
   <button class="tab-btn" id="tab-rack" ontouchstart="event.preventDefault()" ontouchend="switchTab('rack')" onclick="switchTab('rack')">Rack Settings</button>
+  <button class="tab-btn" id="tab-equip" ontouchstart="event.preventDefault()" ontouchend="switchTab('equip')" onclick="switchTab('equip')">Equipment Settings</button>
 </div>
 
 <!-- ═══════════════════════════ PLATE CALCULATOR PAGE ═══════════════════════════ -->
@@ -466,6 +486,27 @@ button.clear-round:active{
   <button class="rack-add" ontouchstart="event.preventDefault()" ontouchend="rackAdd()" onclick="rackAdd()">+ Add exercise</button>
 
 </div><!-- end page-rack -->
+<!-- ═══════════════════════════ EQUIPMENT SETTINGS PAGE (v2.9) ═══════════════════════════ -->
+<div id="page-equip" class="page hidden">
+
+  <div class="rack-head">
+    <div class="inv-title">Equipment settings</div>
+    <div class="inv-sub">Machine setup notes</div>
+  </div>
+  <div class="rack-note">Tap a note to change it. The box grows as you type.</div>
+
+  <div class="rack-cols equip-cols">
+    <span style="width:28px;"></span>
+    <span class="spacer">Exercise</span>
+    <span class="equip-notes-h">Notes</span>
+    <span style="width:26px;"></span>
+  </div>
+
+  <div id="equipRows"></div>
+
+  <button class="rack-add" ontouchstart="event.preventDefault()" ontouchend="equipAdd()" onclick="equipAdd()">+ Add exercise</button>
+
+</div><!-- end page-equip -->
 
 </div><!-- end .app -->
 
@@ -607,13 +648,14 @@ function switchTab(tab){
      mid-workout and expects what he entered to still be there.
      Only refresh the max labels, which depend on inventory. */
   if(tab==='load'){ updateLoadMaxLabels(); }
-  var pages={calc:'page-calc', load:'page-load', rack:'page-rack'};
-  var tabs ={calc:'tab-calc',  load:'tab-load',  rack:'tab-rack'};
+  var pages={calc:'page-calc', load:'page-load', rack:'page-rack', equip:'page-equip'};
+  var tabs ={calc:'tab-calc',  load:'tab-load',  rack:'tab-rack',  equip:'tab-equip'};
   for(var k in pages){
     var pg=document.getElementById(pages[k]), tb=document.getElementById(tabs[k]);
     if(pg) pg.classList.toggle('hidden', k!==tab);
     if(tb) tb.classList.toggle('active', k===tab);
   }
+  if(tab==='equip') equipFitAll();
 }
 
 function stepLoad(denom,delta){
@@ -887,7 +929,152 @@ function rackDel(i){
   rackSave(); rackRender();
 }
 
-loadInv();update();rackLoad();loadWeather();
+/* ═══════════ EQUIPMENT SETTINGS (v2.9) ═══════════
+   Machine setups that are written down rather than numbered — the ForceUSA
+   compact leg press / hack squat and the like. Same pattern as Rack Settings:
+   exercise name on the left, editable in the app, drag to reorder, x to
+   delete. On the right is one free-text notes box per exercise, fixed width,
+   that grows downward to fit whatever Tom writes.
+   Kept entirely separate from RACK (own array, own storage key, own drag
+   code) so Rack Settings is untouched. Rows can be different heights here,
+   so the drag works from each row's live midpoint rather than a fixed pitch. */
+var EQUIP_KEY="plc_equip";
+var EQUIP_DEFAULT=[
+  {n:"Hack Squat", t:""},
+  {n:"Leg Press",  t:""},
+  {n:"Calf Raise", t:""}
+];
+var EQUIP=[];
+
+function equipLoad(){
+  EQUIP=null;
+  try{ var raw=localStorage.getItem(EQUIP_KEY); if(raw) EQUIP=JSON.parse(raw); }catch(e){}
+  if(!EQUIP || !EQUIP.length) EQUIP = EQUIP_DEFAULT.map(function(r){return {n:r.n,t:r.t};});
+  equipRender();
+}
+function equipSave(){
+  try{ localStorage.setItem(EQUIP_KEY, JSON.stringify(EQUIP)); }catch(e){}
+}
+function equipEsc(v){
+  return String(v==null?"":v).replace(/&/g,"&amp;").replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+/* Grow (or shrink) a notes box to exactly fit its text. */
+function equipFit(el){
+  if(!el) return;
+  el.style.height="auto";
+  el.style.height=el.scrollHeight+"px";
+}
+function equipFitAll(){
+  var els=document.querySelectorAll("#equipRows .equip-notes");
+  for(var k=0;k<els.length;k++) equipFit(els[k]);
+}
+function equipRender(){
+  var host=document.getElementById("equipRows");
+  if(!host) return;
+  var h="";
+  for(var i=0;i<EQUIP.length;i++){
+    var r=EQUIP[i];
+    h+='<div class="rack-row equip-row" data-i="'+i+'">'
+     +  '<span class="rack-grip" onpointerdown="equipDragStart(event,'+i+')" aria-label="Drag to reorder">&#9776;</span>'
+     +  '<input class="rack-name" type="text" value="'+equipEsc(r.n)+'" '
+     +        'placeholder="Exercise" oninput="equipSet('+i+',\'n\',this.value)">'
+     +  '<textarea class="equip-notes" rows="1" placeholder="Add notes" '
+     +        'oninput="equipSet('+i+',\'t\',this.value);equipFit(this)">'+equipEsc(r.t)+'</textarea>'
+     +  '<button class="rack-del" onclick="equipDel('+i+')" aria-label="Delete row">&#215;</button>'
+     +'</div>';
+  }
+  host.innerHTML=h;
+  equipFitAll();
+}
+function equipSet(i,field,val){
+  if(!EQUIP[i]) return;
+  EQUIP[i][field]=val;
+  equipSave();
+}
+function equipAdd(){
+  EQUIP.push({n:"",t:""});
+  equipSave(); equipRender();
+  var names=document.querySelectorAll("#equipRows .rack-name");
+  if(names.length) names[names.length-1].focus();
+}
+function equipDel(i){
+  if(!EQUIP[i]) return;
+  var label=EQUIP[i].n ? '"'+EQUIP[i].n+'"' : "this exercise";
+  if(!confirm("Delete "+label+"?")) return;
+  EQUIP.splice(i,1);
+  equipSave(); equipRender();
+}
+function equipMove(from,to){
+  if(from===to) return;
+  if(from<0||from>=EQUIP.length||to<0||to>=EQUIP.length) return;
+  var moved=EQUIP.splice(from,1)[0];
+  EQUIP.splice(to,0,moved);
+  equipSave(); equipRender();
+}
+
+/* Drag to reorder — same feel as the Rack page. The grip MUST keep
+   touch-action:none (it does, via .rack-grip) or iOS scrolls instead. */
+var eqDrag=null;
+function equipRowEls(){ return document.querySelectorAll("#equipRows .rack-row"); }
+function equipDragStart(e,i){
+  if(e.button!==undefined && e.button!==0) return;
+  var rows=equipRowEls(), el=rows[i];
+  if(!el) return;
+  e.preventDefault();
+  try{ e.target.setPointerCapture(e.pointerId); }catch(err){}
+  var mids=[], tops=[], gap=0;
+  for(var k=0;k<rows.length;k++){
+    var b=rows[k].getBoundingClientRect();
+    mids.push(b.top+b.height/2); tops.push(b.top);
+  }
+  if(rows.length>1){ var b0=rows[0].getBoundingClientRect(); gap=tops[1]-(b0.top+b0.height); }
+  eqDrag={ i:i, to:i, el:el, rows:rows, y0:e.clientY, mids:mids,
+           h:el.getBoundingClientRect().height+gap };
+  el.classList.add("rack-dragging");
+  for(var k2=0;k2<rows.length;k2++) if(k2!==i) rows[k2].classList.add("rack-shifting");
+  document.addEventListener("pointermove", equipDragMove);
+  document.addEventListener("pointerup", equipDragEnd);
+  document.addEventListener("pointercancel", equipDragEnd);
+}
+function equipDragMove(e){
+  if(!eqDrag) return;
+  e.preventDefault();
+  var dy=e.clientY-eqDrag.y0;
+  eqDrag.el.style.transform="translateY("+dy+"px)";
+  var y=eqDrag.mids[eqDrag.i]+dy, to=eqDrag.i;
+  while(to<eqDrag.mids.length-1 && y>eqDrag.mids[to+1]) to++;
+  while(to>0 && y<eqDrag.mids[to-1]) to--;
+  if(to===eqDrag.to) return;
+  eqDrag.to=to;
+  for(var k=0;k<eqDrag.rows.length;k++){
+    if(k===eqDrag.i) continue;
+    var shift=0;
+    if(k>eqDrag.i && k<=to)      shift=-eqDrag.h;
+    else if(k<eqDrag.i && k>=to) shift= eqDrag.h;
+    eqDrag.rows[k].style.transform = shift ? "translateY("+shift+"px)" : "";
+  }
+}
+function equipDragEnd(e){
+  if(!eqDrag) return;
+  document.removeEventListener("pointermove", equipDragMove);
+  document.removeEventListener("pointerup", equipDragEnd);
+  document.removeEventListener("pointercancel", equipDragEnd);
+  var from=eqDrag.i, to=eqDrag.to;
+  for(var k=0;k<eqDrag.rows.length;k++){
+    eqDrag.rows[k].style.transform="";
+    eqDrag.rows[k].classList.remove("rack-dragging","rack-shifting");
+  }
+  eqDrag=null;
+  if(to!==from && EQUIP[from]){
+    var moved=EQUIP.splice(from,1)[0];
+    EQUIP.splice(to,0,moved);
+    equipSave();
+  }
+  equipRender();
+}
+
+loadInv();update();rackLoad();equipLoad();loadWeather();
 </script>
 </body>
 </html>
